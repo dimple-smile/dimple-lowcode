@@ -1,0 +1,11 @@
+{
+  "form": {
+    "fields": [
+      {
+        "label": "姓名",
+        "value": "xiecp",
+        "componentName": "ElInput",
+      },
+    ]
+  }
+}

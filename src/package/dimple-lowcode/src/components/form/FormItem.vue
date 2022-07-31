@@ -1,0 +1,493 @@
+<!--
+ * @Author: xiechaopeng
+ * @Date: 2021-06-15 09:56:15
+ * @Description: Aiot表单项
+-->
+<template>
+  <div class="ui-aiot-form-item" :class="[type]" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
+    <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
+      <span v-if="required" class="required-icon">*</span>
+      <span>{{ label }}</span>
+      <slot name="label"></slot>
+    </div>
+    <div class="content" :class="[computedSize]" :style="{ width: computedContentWidth, flex: contentWidth === '100%' || form.contentWidth === '100%' ? '1' : '' }">
+      <el-input
+        v-if="type === types.input"
+        v-model="innerValue"
+        v-bind="$attrs"
+        :type="inputType"
+        :placeholder="placeholder"
+        :size="computedSize"
+        :disabled="disabled"
+        clearable
+        @input="handleInput"
+        @change="change"
+      ></el-input>
+      <el-input
+        v-if="type === types.number"
+        v-model="innerValue"
+        v-bind="$attrs"
+        :placeholder="placeholder"
+        :size="computedSize"
+        :disabled="disabled"
+        clearable
+        @input="handleNumberInput"
+        @change="change"
+        @blur="handleNumberBlur"
+      ></el-input>
+      <el-input
+        v-if="type === types.float"
+        v-model="innerValue"
+        v-bind="$attrs"
+        :placeholder="placeholder"
+        :size="computedSize"
+        :disabled="disabled"
+        clearable
+        @input="handleFloatInput"
+        @blur="handleNumberBlur"
+      ></el-input>
+      <el-input
+        v-if="type === types.textarea"
+        v-model="innerValue"
+        type="textarea"
+        show-word-limit
+        :autosize="{ minRows: 5, maxRows: 5 }"
+        :maxlength="$attrs.maxlength || 50"
+        clearable
+        v-bind="$attrs"
+        :placeholder="placeholder"
+        :size="computedSize"
+        :disabled="disabled"
+        @change="change"
+      ></el-input>
+      <el-switch v-else-if="type === types.switch" v-model="innerValue" :placeholder="placeholder" :size="computedSize" :disabled="disabled" v-bind="$attrs" @change="change"></el-switch>
+      <template v-else-if="type === types.radio">
+        <el-radio-group class="radio-group" v-model="innerValue" @change="change" :disabled="disabled">
+          <el-radio :disabled="disabled" class="radio" v-for="item in computeOptions" :label="item[optionsValueKey]" :key="item[optionsValueKey]" :style="horizontalRadio ? 'margin-bottom: 0' : ''">{{
+            item[optionsLabelKey]
+          }}</el-radio>
+        </el-radio-group>
+      </template>
+      <template v-else-if="type === types.select">
+        <el-select
+          class="select"
+          popper-class="aiot-form-item-select"
+          v-model="innerValue"
+          :placeholder="placeholder"
+          @change="change"
+          :size="computedSize"
+          :disabled="disabled"
+          v-bind="$attrs"
+          clearable
+        >
+          <el-option v-for="item in computeOptions" :key="item[optionsValueKey]" :label="item[optionsLabelKey]" :value="item[optionsValueKey]"> </el-option>
+        </el-select>
+      </template>
+      <template v-else-if="type === types['checkbox-group']">
+        <el-checkbox-group v-model="innerValue" :disabled="disabled" @change="change">
+          <el-checkbox
+            class="checkbox"
+            v-for="item in computeOptions"
+            :key="item[optionsValueKey]"
+            :label="item[optionsValueKey]"
+            :disabled="disabled"
+            :style="horizontalCheckbox ? 'margin-bottom: 0' : ''"
+          >
+            {{ item[optionsLabelKey] }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </template>
+      <template v-else-if="type === types['amount-input']">
+        <amount-input v-model="innerValue" :size="computedSize" :disabled="disabled" :placeholder="placeholder" @change="change"></amount-input>
+      </template>
+      <template v-else-if="type === types['amount-text']">
+        <amount-text :value="innerValue"></amount-text>
+      </template>
+      <template v-else-if="type === types['time']">
+        <el-time-select
+          v-model="innerValue"
+          style="width: 100%"
+          :size="computedSize"
+          :placeholder="placeholder || '时间'"
+          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+          v-bind="$attrs"
+          @change="change"
+        >
+        </el-time-select>
+      </template>
+      <template v-else-if="type === types['date']">
+        <el-date-picker
+          v-model="innerValue"
+          style="width: 100%"
+          type="date"
+          :size="computedSize"
+          :placeholder="placeholder || '日期'"
+          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+          v-bind="$attrs"
+          @change="change"
+        >
+        </el-date-picker>
+      </template>
+      <template v-else-if="type === types['datetime']">
+        <el-date-picker
+          v-model="innerValue"
+          style="width: 100%"
+          type="datetime"
+          :size="computedSize"
+          :placeholder="placeholder || '日期时间'"
+          :default-time="$attrs['default-time'] || $attrs['defaultTime'] || '23:59:59'"
+          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+          v-bind="$attrs"
+          @change="change"
+        >
+        </el-date-picker>
+      </template>
+      <template v-else-if="type === types['daterange']">
+        <el-date-picker
+          v-model="innerValue"
+          style="width: 100%"
+          type="daterange"
+          :size="computedSize"
+          :placeholder="placeholder"
+          :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
+          :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期'"
+          :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期'"
+          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+          :format="$attrs['format'] || 'yyyy-MM-dd'"
+          v-bind="$attrs"
+          @change="change"
+        >
+        </el-date-picker>
+      </template>
+      <template v-else-if="type === types['datetimerange']">
+        <el-date-picker
+          v-model="innerValue"
+          style="width: 100%"
+          type="datetimerange"
+          :size="computedSize"
+          :placeholder="placeholder"
+          :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
+          :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期时间'"
+          :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期时间'"
+          :default-time="$attrs['default-time'] || $attrs['defaultTime'] || ['00:00:00', '23:59:59']"
+          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+          :format="$attrs['format'] || 'yyyy-MM-dd HH:mm:ss'"
+          v-bind="$attrs"
+          @change="change"
+        >
+        </el-date-picker>
+      </template>
+      <slot v-else-if="type === types['text']">
+        {{ value }}
+      </slot>
+      <slot v-else></slot>
+      <div v-if="innerError" class="error-message" :class="{ block: blockMessage, inline: !blockMessage }">
+        <i class="iconfont icontishixinxi error-message-icon"></i>
+        {{ innerError }}
+      </div>
+      <div v-if="!innerError && tip" class="error-message tip" :class="{ block: blockMessage, inline: !blockMessage }">
+        <i class="iconfont icontishixinxi error-message-icon"></i>
+        {{ tip }}
+      </div>
+      <div v-if="$slots.append" class="error-message inline">
+        <slot name="append"></slot>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const types = {
+  text: 'text',
+  input: 'input',
+  number: 'number',
+  float: 'float',
+  textarea: 'textarea',
+  switch: 'switch',
+  radio: 'radio',
+  select: 'select',
+  'checkbox-group': 'checkbox-group',
+  time: 'time',
+  date: 'date',
+  datetime: 'datetime',
+  daterange: 'daterange',
+  datetimerange: 'datetimerange',
+}
+
+export default {
+  name: 'FormItem',
+  props: {
+    type: { type: String, default: '' },
+    inputType: { type: String, default: '' },
+    label: { type: String, default: '' },
+    labelLength: { type: [String, Number], default: '' },
+    labelPosition: { type: String, default: '' },
+    required: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+    options: { type: [Array, Object], default: () => [] },
+    optionsLabelKey: { type: String, default: 'label' },
+    optionsValueKey: { type: String, default: 'value' },
+    value: { type: [String, Boolean, Number, Array], default: undefined },
+    size: { type: String, default: '' },
+    placeholder: { type: String, default: '' },
+    error: { type: String, default: '' },
+    tip: { type: String, default: '' },
+    blockMessage: { type: Boolean, default: false },
+    contentWidth: { type: [String, Number], default: '' },
+    alignItems: { type: String, default: 'center' },
+    marginBottom: { type: String, default: '' },
+    horizontalRadio: { type: Boolean, default: false },
+    horizontalCheckbox: { type: Boolean, default: false },
+    inputFilterString: { type: Array, default: () => [',', '。', '，', '!', '$', '^', '`', '、'] },
+  },
+  data() {
+    return {
+      types,
+      innerValue: '',
+      innerError: '',
+    }
+  },
+  computed: {
+    clientWidth() {
+      return document.documentElement.clientWidth
+    },
+    form() {
+      let parent = this.$parent
+      let parentName = parent.$options._componentTag
+      while (!['DimpleLowcodeForm', 'dimple-lowcode-form', 'Form'].includes(parentName)) {
+        parent = parent.$parent
+        parentName = parent.$options._componentTag
+      }
+      return parent
+    },
+    computedSize() {
+      return this.size || this.form.size || 'mini'
+    },
+    computedLabelWidth() {
+      const labelUnitWidth = 14
+      const baseViewportWidth = 1920
+      let scaleLabelUnitWidth = (labelUnitWidth * this.clientWidth) / baseViewportWidth
+      if (scaleLabelUnitWidth < 12) scaleLabelUnitWidth = 12
+      const currentLabelLength = this.labelLength !== undefined && this.labelLength !== '' ? this.labelLength : this.form.labelLength
+      const labelLength = Number(currentLabelLength)
+
+      const res = scaleLabelUnitWidth * labelLength + 'px'
+      return res
+    },
+    computedContentWidth() {
+      return this.px2vw(this.contentWidth || this.form.contentWidth || '')
+    },
+    computeLabelPosition() {
+      return this.labelPosition || this.form.labelPosition || 'right'
+    },
+    computeAlignItems() {
+      if (this.blockMessage) return this.form.alignItems || 'flex-start'
+      if (this.type === types.textarea) return this.form.alignItems || 'flex-start'
+      return this.alignItems || this.form.alignItems || 'center'
+    },
+    computeMarginBottom() {
+      return this.px2vw(this.marginBottom || this.form.marginBottom || '')
+    },
+    computeOptions() {
+      if (Array.isArray(this.options)) return this.options
+      const res = []
+      for (const key in this.options) {
+        const item = this.options[key]
+        let pushItemKey = item[this.optionsValueKey] || key
+        if (!isNaN(pushItemKey)) pushItemKey = Number(pushItemKey)
+        const pushItem = {
+          [this.optionsValueKey]: pushItemKey,
+          [this.optionsLabelKey]: item[this.optionsLabelKey] || item,
+        }
+        res.push(pushItem)
+      }
+      return res
+    },
+  },
+  watch: {
+    value: {
+      handler: function (newValue) {
+        if (newValue === this.innerValue) return
+        this.innerValue = newValue
+      },
+      immediate: true,
+    },
+    error: {
+      handler: function (newValue) {
+        if (newValue === this.innerError) return
+        this.innerError = newValue
+      },
+      immediate: true,
+    },
+    innerValue() {
+      this.resetError()
+    },
+  },
+  created() {
+    if (this.type === types['checkbox-group']) this.innerValue = []
+    if (this.type === types['datetimerange']) this.innerValue = []
+  },
+  methods: {
+    resetError() {
+      this.innerError = ''
+      this.$emit('update:error', '')
+    },
+    handleInput(value) {
+      const inputFilterString = this.inputFilterString
+      let filterValue = value
+      filterValue = value.replace(/\s*/g, '')
+      for (const item of inputFilterString) {
+        filterValue = filterValue.replace(item, '')
+      }
+      this.innerValue = filterValue
+    },
+    change(e) {
+      this.resetError()
+      this.$emit('change', e)
+      this.$emit('input', e)
+    },
+    px2vw(px) {
+      if (!px) return px
+      if (px.toString().indexOf('%') > -1) return
+      const pxNumber = Number(px.toString().replace('px', ''))
+      if (Number.isNaN(pxNumber)) return px
+      return Number(((100 * pxNumber) / 1920).toFixed(3)) + 'vw'
+    },
+    handleNumberInput(value) {
+      this.resetError()
+      const { max = Number.MAX_SAFE_INTEGER, min = 0 } = this.$attrs
+      const innerValue = value
+        .toString()
+        .replace(/[^0-9-]+/, '')
+        .replace('.', '')
+      if (value.toString().indexOf('.') > -1) return (this.innerValue = innerValue)
+      if (value.toString().indexOf('e') > -1) return (this.innerValue = innerValue)
+      if (Number.isNaN(Number(value))) return (this.innerValue = innerValue)
+      if (Number(value) > Number(max)) return (this.innerValue = max)
+      if (Number(value) < Number(min)) return (this.innerValue = min)
+    },
+    handleNumberBlur() {
+      let value = ''
+      if (this.innerValue === '') value = ''
+      if (this.innerValue !== '') value = Number(this.innerValue)
+      this.$emit('input', value)
+      this.$emit('change', value)
+    },
+    handleFloatInput(value) {
+      this.resetError()
+      const { max = Number.MAX_SAFE_INTEGER, min = 0 } = this.$attrs
+      const innerValue = value.toString().replace(/[^0-9-]+/, '')
+      if (value.toString().indexOf('e') > -1) return (this.innerValue = innerValue)
+      if (Number.isNaN(Number(value))) return (this.innerValue = innerValue)
+      if (Number(value) > Number(max)) return (this.innerValue = max)
+      if (Number(value) < Number(min)) return (this.innerValue = min)
+    },
+    isEmpty(obj) {
+      const reg = new RegExp('^[ ]+$')
+      if (typeof obj === 'undefined' || obj === null || obj === '' || reg.test(obj)) return true
+      return false
+    },
+  },
+}
+</script>
+
+<style scoped>
+.ui-aiot-form-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+.label {
+  margin-right: 10px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+.label .right {
+  justify-content: flex-end;
+}
+.label .left {
+  justify-content: flex-start;
+}
+
+.required-icon {
+  margin-right: 5px;
+  margin-top: 8px;
+  color: #dd3914;
+}
+
+.content {
+  position: relative;
+}
+.select {
+  width: 100%;
+}
+.content .se {
+  width: 160px;
+}
+.content .mini {
+  width: 320px;
+}
+.content .mini .radio-group {
+  margin-top: 4px;
+}
+.content .mini .radio {
+  margin-bottom: 16px;
+}
+.content .mini .checkbox {
+  margin-bottom: 16px;
+}
+
+.content .small {
+  width: 480px;
+}
+.content .medium {
+  width: 720px;
+}
+.aiot-confirm-button {
+  border: 1px solid #4066e2 !important;
+}
+.aiot-confirm-button:hover {
+  border: 1px solid #4066e2 !important;
+}
+.aiot-confirm-button:active {
+  border: 1px solid #4066e2 !important;
+}
+.aiot-confirm-button:focus {
+  border: 1px solid #4066e2 !important;
+}
+.error-message {
+  display: flex;
+  align-items: center;
+  color: #dd3914;
+}
+
+.error-message .tip {
+  color: #999999;
+}
+.error-message .inline {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 10px);
+  height: 100%;
+  white-space: nowrap;
+}
+.error-message .block {
+  margin-top: 10px;
+}
+.error-message-icon {
+  margin-right: 10px;
+}
+</style>
+
+<style>
+/* 有全局样式被覆盖了，这里处理一下 */
+.ui-aiot-form-item .el-textarea__inner {
+  font-size: 15px !important;
+  resize: none;
+}
+.ui-aiot-form-item .el-range-input {
+  font-size: 14px !important;
+}
+</style>
