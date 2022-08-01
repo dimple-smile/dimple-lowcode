@@ -1,6 +1,6 @@
 <template>
   <div class="dimple-lowcode-conatiner">
-    <div class="header">
+    <div v-if="!isPreview" class="header">
       <el-form :inline="true" size="mini">
         <el-form-item label="栅格高度">
           <el-input v-model="rowHeight" type="number"></el-input>
@@ -9,13 +9,14 @@
           <el-input v-model="gridNum" type="number" placeholder="12"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">保存</el-button>
-          <el-button type="primary">预览</el-button>
+          <el-button type="primary" icon="el-icon-setting" @click="drawer = true">表单配置</el-button>
+          <el-button type="primary" icon="el-icon-upload" @click="preview">预览</el-button>
+          <el-button type="primary" icon="el-icon-success">保存</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="selection">
-      <div class="material">
+      <div v-if="!isPreview" class="material">
         <Materials v-model="activeMaterialValue" :materials="materials" @drag="drag" @dragend="dragend" />
       </div>
       <div ref="content" class="content">
@@ -31,25 +32,47 @@
             :use-css-transforms="true"
             :auto-size="true"
           >
-            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i">
+            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="isPreview">
               <div class="content-component-item" @click="componentItemClickHandle(item)">
-                <div class="content-component-item-mask">
+                <div v-if="!isPreview" class="content-component-item-mask">
                   <i class="icon el-icon-delete" @click="removeItem(item)"></i>
                 </div>
                 <Render v-if="item.component" :materials="materials" :componentName="item.key" :props="item.props || {}"></Render>
               </div>
             </grid-item>
           </grid-layout>
-          <FormItem label-length="9" v-if="layout.length">
-            <el-button size="mini">重置</el-button>
-            <el-button type="primary" size="mini" @click="submit">提交</el-button>
+          <FormItem v-if="formConfig.submit.show" label-length="9">
+            <!-- <el-button size="mini">重置</el-button> -->
+            <el-button type="primary" size="mini" @click="submit">{{ formConfig.submit.submitText }}</el-button>
           </FormItem>
         </Form>
       </div>
-      <div class="options">
+      <div v-if="!isPreview" class="options">
         <Configs v-model="currentComponent" />
       </div>
     </div>
+
+    <el-drawer title="表单配置" :visible.sync="drawer">
+      <div style="padding: 20px">
+        <Form label-length="10">
+          <FormItem label="显示提交按钮" type="switch" v-model="formConfig.submit.show"></FormItem>
+          <FormItem label="提交按钮文本" type="input" v-model="formConfig.submit.submitText"></FormItem>
+          <FormItem label="提交接口地址" type="input" v-model="formConfig.submit.api"></FormItem>
+          <FormItem label="表单数据字段名" type="input" v-model="formConfig.submit.formDataKey"></FormItem>
+          <FormItem
+            label="获取认证方式"
+            type="select"
+            :options="[
+              { label: '从地址栏URL参数中获取', value: 'url' },
+              { label: '自定义', value: 'custom' },
+            ]"
+            v-model="formConfig.submit.getTokenType"
+          ></FormItem>
+          <FormItem v-if="formConfig.submit.getTokenType === 'url'" label="认证参数名称" type="input" v-model="formConfig.submit.urlParamsName"></FormItem>
+          <FormItem v-if="formConfig.submit.getTokenType === 'custom'" label="获取认证代码" type="textarea" maxlength="500" v-model="formConfig.submit.getTokenCode"></FormItem>
+        </Form>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -83,11 +106,14 @@ export default {
       gridNum: 1,
       rowHeight: 40,
       layout: [],
+      formConfig: { submit: { show: false, submitText: '提交', api: 'http://das.aiot.com/lowcode', formDataKey: 'form', getTokenType: 'url', urlParamsName: 'token' } },
       mouseX: null,
       mouseY: null,
       drageData: null,
       activeMaterialValue: null,
       currentComponent: null,
+      drawer: false,
+      isPreview: false,
     }
   },
   computed: {
@@ -152,6 +178,10 @@ export default {
       this.currentComponent = item
     },
     submit() {},
+    preview() {
+      this.isPreview = true
+      this.$message.success('按下ESC键可以退出预览')
+    },
   },
   created() {
     if (!this.materials[0]) return
@@ -163,9 +193,17 @@ export default {
       this.mouseY = e.clientY
     }
     document.addEventListener('dragover', this.dragoverHandle, false)
+
+    this.escHandle = (e) => {
+      const isEsc = e.keyCode === 27
+      if (!isEsc) return
+      this.isPreview = false
+    }
+    document.addEventListener('keydown', this.escHandle, false)
   },
   beforeDestroy() {
     document.removeEventListener('dragover', this.dragoverHandle, false)
+    document.removeEventListener('keydown', this.escHandle, false)
   },
 }
 </script>

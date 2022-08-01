@@ -29,7 +29,7 @@ import {
   DatePicker,
   TimeSelect,
   TimePicker,
-  // Popover,
+  Popover,
   // Tooltip,
   // Breadcrumb,
   // BreadcrumbItem,
@@ -75,8 +75,9 @@ import {
   // CascaderPanel,
   // Loading,
   // MessageBox,
-  // Message,
+  Message,
   // Notification
+  Drawer
 } from 'element-ui'
 
 export default {
@@ -110,7 +111,7 @@ export default {
     Vue.use(DatePicker)
     Vue.use(TimeSelect)
     Vue.use(TimePicker)
-    // Vue.use(Popover)
+    Vue.use(Popover)
     // Vue.use(Tooltip)
     // Vue.use(Breadcrumb)
     // Vue.use(BreadcrumbItem)
@@ -154,5 +155,7 @@ export default {
     // Vue.use(Backtop)
     // Vue.use(PageHeader)
     // Vue.use(CascaderPanel)
+    Vue.use(Drawer)
+    Vue.prototype.$message = Message;
   },
 }

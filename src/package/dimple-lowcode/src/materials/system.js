@@ -17,7 +17,6 @@ export default [
         key: FormItem.name,
         component: FormItem,
         props: { type: 'textarea', label: '文本域', value: '' },
-        w: 1,
         h: 3,
         config: {},
       },
@@ -27,13 +26,7 @@ export default [
         component: FormItem,
         props: { type: 'select', label: '选择器', value: '', options: [{ label: '选项1', value: 0 }], placeholder: '请选择' },
         config: {
-          collapses: [
-            {
-              name: '组件配置',
-              key: 'props',
-              items: [{ key: 'options', name: '选项配置', modelKey: 'options' }],
-            },
-          ],
+          propsConfig: { optionsEditorConfig: { show: true } },
         },
       },
       {
@@ -66,7 +59,9 @@ export default [
           ],
           horizontalCheckbox: true,
         },
-        config: {},
+        config: {
+          propsConfig: { optionsEditorConfig: { show: true } },
+        },
       },
       {
         name: '开关',
