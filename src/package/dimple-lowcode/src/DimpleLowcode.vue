@@ -57,19 +57,26 @@
         <Form label-length="10">
           <FormItem label="显示提交按钮" type="switch" v-model="formConfig.submit.show"></FormItem>
           <FormItem label="提交按钮文本" type="input" v-model="formConfig.submit.submitText"></FormItem>
-          <FormItem label="提交接口地址" type="input" v-model="formConfig.submit.api"></FormItem>
-          <FormItem label="表单数据字段名" type="input" v-model="formConfig.submit.formDataKey"></FormItem>
-          <FormItem
-            label="获取认证方式"
-            type="select"
-            :options="[
-              { label: '从地址栏URL参数中获取', value: 'url' },
-              { label: '自定义', value: 'custom' },
-            ]"
-            v-model="formConfig.submit.getTokenType"
-          ></FormItem>
-          <FormItem v-if="formConfig.submit.getTokenType === 'url'" label="认证参数名称" type="input" v-model="formConfig.submit.urlParamsName"></FormItem>
-          <FormItem v-if="formConfig.submit.getTokenType === 'custom'" label="获取认证代码" type="textarea" maxlength="500" v-model="formConfig.submit.getTokenCode"></FormItem>
+          <FormItem label="提交行为" type="select" v-model="formConfig.submit.submitType" :options="submitTypeOptions"></FormItem>
+          <template v-if="formConfig.submit.submitType === 'request'">
+            <FormItem label="提交接口地址" type="input" v-model="formConfig.submit.api"></FormItem>
+            <FormItem label="表单数据字段名" type="input" v-model="formConfig.submit.formDataKey"></FormItem>
+            <FormItem
+              label="获取认证方式"
+              type="select"
+              :options="[
+                { label: '从地址栏URL参数中获取', value: 'url' },
+                { label: '自定义', value: 'custom' },
+              ]"
+              v-model="formConfig.submit.getTokenType"
+            ></FormItem>
+            <FormItem v-if="formConfig.submit.getTokenType === 'url'" label="认证参数名称" type="input" v-model="formConfig.submit.urlParamsName"></FormItem>
+            <FormItem v-if="formConfig.submit.getTokenType === 'custom'" label="获取认证代码" type="textarea" maxlength="500" v-model="formConfig.submit.getTokenCode"></FormItem>
+          </template>
+
+          <template v-if="formConfig.submit.submitType === 'link'">
+            <FormItem label="链接地址" type="input" v-model="formConfig.submit.url"></FormItem>
+          </template>
         </Form>
       </div>
     </el-drawer>
@@ -106,7 +113,7 @@ export default {
       gridNum: 1,
       rowHeight: 40,
       layout: [],
-      formConfig: { submit: { show: false, submitText: '提交', api: 'http://das.aiot.com/lowcode', formDataKey: 'form', getTokenType: 'url', urlParamsName: 'token' } },
+      formConfig: { submit: { show: false, submitText: '提交', submitType: 'request', api: 'http://das.aiot.com/lowcode', formDataKey: 'form', getTokenType: 'url', urlParamsName: 'token' } },
       mouseX: null,
       mouseY: null,
       drageData: null,
@@ -114,6 +121,10 @@ export default {
       currentComponent: null,
       drawer: false,
       isPreview: false,
+      submitTypeOptions: [
+        { value: 'request', label: '发送网络请求' },
+        { value: 'link', label: '跳转链接' },
+      ],
     }
   },
   computed: {
