@@ -10,7 +10,7 @@
 
 # 组件效果预览
 你有两种方式预览
-- 使用浏览器访问该地址：https://dimple-uni-scroll.vercel.app 进行预览。
+- 使用浏览器访问该地址：https://dimple-lowcode.vercel.app 进行预览。
 - 这个项目本身就是一个 vue-cli 项目，git clone该项目到本地后，npm i之后 npm run dev即可预览。
 
 # 目录
