@@ -139,7 +139,7 @@ import { valueTypes, editTypes } from '@dimple-smile/dimple-lowcode'
 
 | 参数名 | <img width="200px" /> 意义 <img width="200px" /> | 说明 |
 | - | - | - |
-| 默认 | 暂无插槽 | 无
+| logo | logo处的插槽 | 默认为项目名称
 
 ### 事件
 [(Back to top)](#目录)

@@ -1,10 +1,12 @@
 <template>
   <div class="dimple-lowcode-conatiner" v-loading="loading">
     <Form v-if="!isPreview" class="header" margin-bottom="0">
-      <div class="title" style="flex: 1">DIMPLE表单设计器</div>
+      <slot name="logo">
+        <div class="title" style="flex: 1">DIMPLE表单设计器</div>
+      </slot>
       <div style="display: flex">
         <FormItem label="栅格高度" type="number" v-model="rowHeight" :min="10"></FormItem>
-        <FormItem label="栅格数量" type="number" v-model="rowHeight" :min="1" :max="12"></FormItem>
+        <FormItem label="栅格数量" type="number" v-model="gridNum" :min="1" :max="12"></FormItem>
       </div>
       <div style="flex: 1; text-align: right">
         <el-button type="primary" size="mini" icon="el-icon-setting" @click="drawer = true">表单配置</el-button>
