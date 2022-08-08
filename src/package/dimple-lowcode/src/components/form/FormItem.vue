@@ -9,6 +9,9 @@
       <span v-if="required" class="required-icon">*</span>
       <span>{{ label }}</span>
       <slot name="label"></slot>
+      <el-tooltip v-if="tip" class="item" effect="dark" :content="tip" placement="top">
+        <span class="tip-icon el-icon-warning"></span>
+      </el-tooltip>
     </div>
     <div class="content" :class="[computedSize]" :style="{ width: computedContentWidth, flex: contentWidth === '100%' || form.contentWidth === '100%' ? '1' : '' }">
       <el-input
@@ -180,14 +183,26 @@
       <slot v-else-if="type === types['text']">
         {{ value }}
       </slot>
+      <slot v-else-if="type === types['autocomplete']">
+        <el-autocomplete
+          style="width: 100%"
+          v-model="innerValue"
+          v-bind="$attrs"
+          v-on="$listeners"
+          :size="computedSize"
+          :fetch-suggestions="querySearch"
+          :placeholder="placeholder"
+          @select="autocompleteChange"
+        >
+          <template #default="{ item }">
+            <span>{{ item[optionsLabelKey] }}</span>
+          </template>
+        </el-autocomplete>
+      </slot>
       <slot v-else></slot>
       <div v-if="innerError" class="error-message" :class="{ block: blockMessage, inline: !blockMessage }">
         <i class="iconfont icontishixinxi error-message-icon"></i>
         {{ innerError }}
-      </div>
-      <div v-if="!innerError && tip" class="error-message tip" :class="{ block: blockMessage, inline: !blockMessage }">
-        <i class="iconfont icontishixinxi error-message-icon"></i>
-        {{ tip }}
       </div>
       <div v-if="$slots.append" class="error-message inline">
         <slot name="append"></slot>
@@ -197,9 +212,12 @@
 </template>
 
 <script>
+import { resizeObserver } from '../../utils/resizeObserver'
+
 const types = {
   text: 'text',
   input: 'input',
+  autocomplete: 'autocomplete',
   number: 'number',
   float: 'float',
   textarea: 'textarea',
@@ -220,6 +238,7 @@ export default {
     type: { type: String, default: '' },
     inputType: { type: String, default: '' },
     label: { type: String, default: '' },
+    labelVisible: { type: Boolean, default: true },
     labelLength: { type: [String, Number], default: '' },
     labelPosition: { type: String, default: '' },
     required: { type: Boolean, default: false },
@@ -242,15 +261,13 @@ export default {
   },
   data() {
     return {
+      clientWidth: document.documentElement.clientWidth,
       types,
       innerValue: '',
       innerError: '',
     }
   },
   computed: {
-    clientWidth() {
-      return document.documentElement.clientWidth
-    },
     form() {
       let parent = this.$parent
       let parentName = parent.$options._componentTag
@@ -264,6 +281,7 @@ export default {
       return this.size || this.form.size || 'mini'
     },
     computedLabelWidth() {
+      if (!this.labelVisible) return '0px'
       const labelUnitWidth = 14
       const baseViewportWidth = 1920
       let scaleLabelUnitWidth = (labelUnitWidth * this.clientWidth) / baseViewportWidth
@@ -323,10 +341,7 @@ export default {
       this.resetError()
     },
   },
-  created() {
-    if (this.type === types['checkbox-group']) this.innerValue = []
-    if (this.type === types['datetimerange']) this.innerValue = []
-  },
+
   methods: {
     resetError() {
       this.innerError = ''
@@ -387,6 +402,34 @@ export default {
       if (typeof obj === 'undefined' || obj === null || obj === '' || reg.test(obj)) return true
       return false
     },
+    querySearch(queryString, cb) {
+      const options = this.options || []
+      const text = queryString.toLowerCase()
+      const results = queryString
+        ? options.filter((item) => {
+            const label = item[this.optionsLabelKey].toLowerCase()
+            const value = item[this.optionsValueKey].toLowerCase()
+            return label.indexOf(text) > -1 || value.indexOf(text) > -1
+          })
+        : options
+      cb(results)
+    },
+    autocompleteChange(item) {
+      this.change(item[this.optionsValueKey])
+    },
+  },
+  created() {
+    if (this.type === types['checkbox-group']) this.innerValue = []
+    if (this.type === types['datetimerange']) this.innerValue = []
+  },
+  mounted() {
+    this.resizeObserver = resizeObserver(({ width, height }) => {
+      this.clientWidth = width
+      this.clientHeight = height
+    })
+  },
+  destroyed() {
+    this.resizeObserver.disconnect()
   },
 }
 </script>
@@ -404,10 +447,10 @@ export default {
   display: flex;
   align-items: center;
 }
-.label .right {
+.label.right {
   justify-content: flex-end;
 }
-.label .left {
+.label.left {
   justify-content: flex-start;
 }
 
@@ -415,6 +458,9 @@ export default {
   margin-right: 5px;
   margin-top: 8px;
   color: #dd3914;
+}
+.tip-icon {
+  color: #999999;
 }
 
 .content {

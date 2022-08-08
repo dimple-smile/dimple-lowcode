@@ -1,8 +1,8 @@
 import 'element-ui/lib/theme-chalk/index.css';
 import {
   // Pagination,
-  // Dialog,
-  // Autocomplete,
+  Dialog,
+  Autocomplete,
   // Dropdown,
   // DropdownMenu,
   // DropdownItem,
@@ -30,7 +30,7 @@ import {
   TimeSelect,
   TimePicker,
   Popover,
-  // Tooltip,
+  Tooltip,
   // Breadcrumb,
   // BreadcrumbItem,
   Form,
@@ -73,7 +73,7 @@ import {
   // Backtop,
   // PageHeader,
   // CascaderPanel,
-  // Loading,
+  Loading,
   // MessageBox,
   Message,
   // Notification
@@ -83,8 +83,8 @@ import {
 export default {
   install: (Vue) => {
     // Vue.use(Pagination)
-    // Vue.use(Dialog)
-    // Vue.use(Autocomplete)
+    Vue.use(Dialog)
+    Vue.use(Autocomplete)
     // Vue.use(Dropdown)
     // Vue.use(DropdownMenu)
     // Vue.use(DropdownItem)
@@ -112,7 +112,7 @@ export default {
     Vue.use(TimeSelect)
     Vue.use(TimePicker)
     Vue.use(Popover)
-    // Vue.use(Tooltip)
+    Vue.use(Tooltip)
     // Vue.use(Breadcrumb)
     // Vue.use(BreadcrumbItem)
     Vue.use(Form)
@@ -155,6 +155,7 @@ export default {
     // Vue.use(Backtop)
     // Vue.use(PageHeader)
     // Vue.use(CascaderPanel)
+    Vue.use(Loading)
     Vue.use(Drawer)
     Vue.prototype.$message = Message;
   },

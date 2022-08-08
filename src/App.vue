@@ -6,7 +6,6 @@
 
 <script>
 import { DimpleLowcode } from './package/dimple-lowcode'
-
 export default {
   name: 'App',
   components: { DimpleLowcode },
@@ -21,6 +20,7 @@ body {
   padding: 0;
   margin: 0;
 }
+
 #app{
   height: 100vh;
 }

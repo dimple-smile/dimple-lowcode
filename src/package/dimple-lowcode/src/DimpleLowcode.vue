@@ -1,26 +1,23 @@
 <template>
-  <div class="dimple-lowcode-conatiner">
-    <div v-if="!isPreview" class="header">
-      <el-form :inline="true" size="mini">
-        <el-form-item label="栅格高度">
-          <el-input v-model="rowHeight" type="number"></el-input>
-        </el-form-item>
-        <el-form-item label="栅格数量">
-          <el-input v-model="gridNum" type="number" placeholder="12"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-setting" @click="drawer = true">表单配置</el-button>
-          <el-button type="primary" icon="el-icon-upload" @click="preview">预览</el-button>
-          <el-button type="primary" icon="el-icon-success">保存</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="selection">
-      <div v-if="!isPreview" class="material">
-        <Materials v-model="activeMaterialValue" :materials="materials" @drag="drag" @dragend="dragend" />
+  <div class="dimple-lowcode-conatiner" v-loading="loading">
+    <Form v-if="!isPreview" class="header" margin-bottom="0">
+      <div class="title" style="flex: 1">DIMPLE表单设计器</div>
+      <div style="display: flex">
+        <FormItem label="栅格高度" type="number" v-model="rowHeight" :min="10"></FormItem>
+        <FormItem label="栅格数量" type="number" v-model="rowHeight" :min="1" :max="12"></FormItem>
       </div>
-      <div ref="content" class="content">
-        <Form label-length="8">
+      <div style="flex: 1; text-align: right">
+        <el-button type="primary" size="mini" icon="el-icon-setting" @click="drawer = true">表单配置</el-button>
+        <el-button type="primary" size="mini" icon="el-icon-upload" @click="toPreview">预览</el-button>
+        <el-button type="primary" size="mini" icon="el-icon-success" @click="save">保存</el-button>
+      </div>
+    </Form>
+    <div class="selection">
+      <div v-if="!isPreview" class="material" @click="currentComponent = null">
+        <Materials :materials="innerMaterials" @drag="drag" @dragend="dragend" />
+      </div>
+      <div ref="content" class="content" @click="currentComponent = null">
+        <Form v-bind="formConfig.formProps">
           <grid-layout
             ref="gridlayout"
             :layout.sync="layout"
@@ -32,53 +29,29 @@
             :use-css-transforms="true"
             :auto-size="true"
           >
-            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="isPreview">
-              <div class="content-component-item" @click="componentItemClickHandle(item)">
-                <div v-if="!isPreview" class="content-component-item-mask">
+            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="innerPreview">
+              <div class="content-component-item" @click.stop="componentItemClickHandle(item)">
+                <div v-if="!isPreview" class="content-component-item-mask" :class="{ 'content-component-item-mask-active': currentComponent && currentComponent.i === item.i }">
                   <i class="icon el-icon-delete" @click="removeItem(item)"></i>
                 </div>
-                <Render v-if="item.component" :materials="materials" :componentName="item.key" :props="item.props || {}"></Render>
+                <template v-if="isPreview ? !item.config.hidden : true">
+                  <Render :value="item" :materials="innerMaterials" />
+                </template>
               </div>
             </grid-item>
           </grid-layout>
           <FormItem v-if="formConfig.submit.show" label-length="9">
-            <!-- <el-button size="mini">重置</el-button> -->
             <el-button type="primary" size="mini" @click="submit">{{ formConfig.submit.submitText }}</el-button>
           </FormItem>
         </Form>
       </div>
       <div v-if="!isPreview" class="options">
-        <Configs v-model="currentComponent" />
+        <ComponentConfigs v-model="currentComponent" :materials="innerMaterials" />
       </div>
     </div>
 
     <el-drawer title="表单配置" :visible.sync="drawer">
-      <div style="padding: 20px">
-        <Form label-length="10">
-          <FormItem label="显示提交按钮" type="switch" v-model="formConfig.submit.show"></FormItem>
-          <FormItem label="提交按钮文本" type="input" v-model="formConfig.submit.submitText"></FormItem>
-          <FormItem label="提交行为" type="select" v-model="formConfig.submit.submitType" :options="submitTypeOptions"></FormItem>
-          <template v-if="formConfig.submit.submitType === 'request'">
-            <FormItem label="提交接口地址" type="input" v-model="formConfig.submit.api"></FormItem>
-            <FormItem label="表单数据字段名" type="input" v-model="formConfig.submit.formDataKey"></FormItem>
-            <FormItem
-              label="获取认证方式"
-              type="select"
-              :options="[
-                { label: '从地址栏URL参数中获取', value: 'url' },
-                { label: '自定义', value: 'custom' },
-              ]"
-              v-model="formConfig.submit.getTokenType"
-            ></FormItem>
-            <FormItem v-if="formConfig.submit.getTokenType === 'url'" label="认证参数名称" type="input" v-model="formConfig.submit.urlParamsName"></FormItem>
-            <FormItem v-if="formConfig.submit.getTokenType === 'custom'" label="获取认证代码" type="textarea" maxlength="500" v-model="formConfig.submit.getTokenCode"></FormItem>
-          </template>
-
-          <template v-if="formConfig.submit.submitType === 'link'">
-            <FormItem label="链接地址" type="input" v-model="formConfig.submit.url"></FormItem>
-          </template>
-        </Form>
-      </div>
+      <FormConfigs v-model="formConfig" />
     </el-drawer>
   </div>
 </template>
@@ -86,10 +59,19 @@
 <script>
 import { GridLayout, GridItem } from 'vue-grid-layout'
 import { Materials } from './components/materials'
-import { Configs } from './components/configs'
-import { Render } from './components/render/'
+import { ComponentConfigs } from './components/componentConfigs'
+import { FormConfigs } from './components/formConfigs'
+import { Render } from './components/render'
 import { Form, FormItem } from './components/form'
 import systemMaterials from './materials/system'
+import { getQueryByKey } from './utils/getQueryByKey'
+import { is } from './utils/is'
+import { validate } from './utils/validate'
+import axios from 'axios'
+import merge from 'lodash/merge'
+import uniqueId from 'lodash/uniqueId'
+
+const ajax = axios.create()
 
 export default {
   name: 'DimpleLowcode',
@@ -97,37 +79,67 @@ export default {
     GridLayout,
     GridItem,
     Materials,
-    Configs,
+    ComponentConfigs,
+    FormConfigs,
     Render,
     Form,
     FormItem,
   },
   props: {
-    materials: {
-      type: Array,
-      default: () => systemMaterials,
-    },
+    materials: { type: Array, default: () => [] },
+    config: { type: Object, default: () => {} },
+    data: { type: Array, default: () => [] },
+    preview: { type: Boolean, default: null },
   },
   data() {
     return {
       gridNum: 1,
       rowHeight: 40,
+      innerMaterials: systemMaterials(),
       layout: [],
-      formConfig: { submit: { show: false, submitText: '提交', submitType: 'request', api: 'http://das.aiot.com/lowcode', formDataKey: 'form', getTokenType: 'url', urlParamsName: 'token' } },
+      formConfig: {
+        id: uniqueId(`${+new Date()}_`),
+        formProps: {
+          labelLength: 8,
+          alignItems: 'center',
+          labelPosition: 'right',
+        },
+        submit: {
+          show: true,
+          submitText: '提交',
+          submitType: 'request',
+          api: '',
+          link: '',
+          formDataFiledName: 'form',
+          successMsg: '',
+          errorMsg: '',
+          headers: [],
+          body: [],
+        },
+        save: {
+          api: '',
+          successMsg: '',
+          errorMsg: '',
+          headers: [],
+          body: [],
+        },
+      },
       mouseX: null,
       mouseY: null,
       drageData: null,
-      activeMaterialValue: null,
       currentComponent: null,
       drawer: false,
-      isPreview: false,
-      submitTypeOptions: [
-        { value: 'request', label: '发送网络请求' },
-        { value: 'link', label: '跳转链接' },
-      ],
+      innerPreview: false,
+      loading: false,
     }
   },
   computed: {
+    isPreview() {
+      if (this.preview === true) return true
+      if (this.preview === false) return false
+      if (this.data.length > 0) return true
+      return this.innerPreview
+    },
     mouseInGrid() {
       if (!this.$refs.content) return
       const parentRect = this.$refs.content.getBoundingClientRect()
@@ -139,8 +151,32 @@ export default {
       return mouseInGrid
     },
   },
+  watch: {
+    data: {
+      handler: function (value) {
+        this.$set(this.layout, 'layout', value || [])
+      },
+      deep: true,
+      immediate: true,
+    },
+    config: {
+      handler: function (value) {
+        this.formConfig = merge(JSON.parse(JSON.stringify(this.formConfig)), value)
+      },
+      deep: true,
+      immediate: true,
+    },
+    materials: {
+      handler: function (value) {
+        this.innerMaterials.push(...(value || []))
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   methods: {
     drag(e, item) {
+      this.currentComponent = null
       if (!this.mouseInGrid) return
 
       const index = this.layout.findIndex((item) => item.i === 'drop')
@@ -150,7 +186,8 @@ export default {
         x = this.layout[index].x
         y = this.layout[index].y
       }
-      this.drageData = { ...item, x, y, w, h, i }
+      this.drageData = { ...item, x, y, w, h, i, id: +new Date() }
+      delete this.drageData.component
       if (index === -1) return this.layout.push(this.drageData)
 
       const parentRect = this.$refs.content.getBoundingClientRect()
@@ -185,18 +222,144 @@ export default {
       this.layout.splice(index, 1)
     },
     componentItemClickHandle(item) {
-      console.log(item)
+      if (this.currentComponent && this.currentComponent.i === item.i) return (this.currentComponent = null)
       this.currentComponent = item
     },
-    submit() {},
-    preview() {
-      this.isPreview = true
+    toPreview() {
+      this.innerPreview = true
       this.$message.success('按下ESC键可以退出预览')
     },
-  },
-  created() {
-    if (!this.materials[0]) return
-    this.activeMaterialValue = this.materials[0].key === undefined ? 0 : this.materials[0].key
+    save() {
+      let api = ''
+      const headers = {}
+      const body = {}
+      let successMsg = ''
+      let errorMsg = ''
+      try {
+        const config = this.formConfig.save
+        api = config.api
+        successMsg = config.successMsg
+        errorMsg = config.errorMsg
+        if (!is.http(api)) return this.$message.warning('保存的接口地址不符合网络接口格式，无法发起保存操作')
+        for (const item of config.headers) {
+          headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
+        }
+        for (const item of config.body) {
+          body[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
+        }
+      } catch (error) {
+        console.error('保存配置填写错误', error)
+        return this.$message.error('保存配置填写错误')
+      }
+
+      this.loading = true
+      ajax
+        .post(api, { headers, data: body })
+        .then((res) => {
+          this.$message.success(successMsg || '保存成功')
+          this.$emit('afterSave', res)
+        })
+        .catch((err) => {
+          this.$message.error(errorMsg || '保存失败')
+          this.$emit('afterSaveError', err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    submit() {
+      let submitType = ''
+      let api = ''
+      const headers = {}
+      const body = {}
+      let successMsg = ''
+      let errorMsg = ''
+      let link = ''
+      let isLink = false
+      let isRequest = false
+      const formData = {}
+      try {
+        const config = this.formConfig.submit
+        submitType = config.submitType
+        link = config.link
+        api = config.api
+        successMsg = config.successMsg
+        errorMsg = config.errorMsg
+        isLink = submitType === 'link'
+        isRequest = submitType === 'request'
+        body.id = this.formConfig.id
+        if (isLink && !is.http(api)) return this.$message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+        if (isRequest && !is.http(api)) return this.$message.warning('提交的接口地址不符合网络接口格式，无法发起提交操作')
+        for (const item of config.headers) {
+          headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
+        }
+        for (const item of config.body) {
+          body[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
+        }
+        let validateMsg = ''
+        for (const item of this.layout) {
+          if (!item.config.validate.disabled) {
+            if (item.formItemDefaultProps.required) {
+              if (!validate.required(item.value, item.valueType)) validateMsg = item.config.validate.requiredValidateMsg
+            }
+            if (!validate.min(item.value, item.config.validate.min, item.valueType)) validateMsg = item.config.validate.minValidateMsg
+            if (!validate.max(item.value, item.config.validate.max, item.valueType)) validateMsg = item.config.validate.maxValidateMsg
+
+            // 校验自定义添加的规则
+            let validateRuleMsg = ''
+            let validateRuleResults = []
+
+            for (const ruleitem of item.config.validate.rules) {
+              validateRuleResults.push({
+                validateMsg: ruleitem.validateMsg,
+                result: validate.regExp(item.value, ruleitem.key),
+              })
+            }
+            if (validateRuleResults.length > 0) {
+              const validateSuccessItem = validateRuleResults.find((o) => !!o.result)
+              const validateFailItem = validateRuleResults.find((o) => !o.result)
+              if (item.config.validate.mode === 'or') {
+                if (!validateSuccessItem) validateRuleMsg = validateFailItem.validateMsg
+              }
+              if (item.config.validate.mode === 'and') {
+                if (validateFailItem) validateRuleMsg = validateFailItem.validateMsg
+              }
+            }
+
+            if (!validateMsg) validateMsg = validateRuleMsg
+
+            if (validateMsg) {
+              validateMsg = item.formItemDefaultProps.label + validateMsg
+              break
+            }
+          }
+          formData[item.filedName] = item.value
+        }
+        if (validateMsg) return this.$message.error(validateMsg)
+        body[this.formConfig.submit.formDataFiledName || 'form'] = formData
+      } catch (error) {
+        console.error('提交配置填写错误', error)
+        return this.$message.error('提交配置填写错误')
+      }
+      if (isLink) return (window.location.href = link)
+
+      if (isRequest) {
+        this.loading = true
+        ajax
+          .post(api, { headers, data: body })
+          .then((res) => {
+            this.$message.success(successMsg || '提交成功')
+            this.$emit('afterSubmit', res)
+          })
+          .catch((err) => {
+            this.$message.error(errorMsg || '提交失败')
+            this.$emit('afterSubmitError', err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+    },
   },
   mounted() {
     this.dragoverHandle = (e) => {
@@ -208,7 +371,7 @@ export default {
     this.escHandle = (e) => {
       const isEsc = e.keyCode === 27
       if (!isEsc) return
-      this.isPreview = false
+      this.innerPreview = false
     }
     document.addEventListener('keydown', this.escHandle, false)
   },
@@ -236,10 +399,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 10px;
 }
 
-.header .el-form-item {
-  margin-bottom: 0px;
+.header .title {
+  font-weight: 500;
 }
 
 .selection {
@@ -261,7 +425,7 @@ export default {
 .content {
   flex: 1;
   height: 100%;
-  overflow: auto;
+  overflow: overlay;
   margin: 0 1%;
 }
 
@@ -298,10 +462,20 @@ export default {
   cursor: pointer;
 }
 
+.content-component-item-mask-active {
+  border: 1px dashed rgba(21, 59, 184, 0.3);
+  background: rgba(21, 59, 184, 0.05);
+}
+
+.content-component-item-mask-active .icon {
+  display: inline-block;
+  cursor: pointer;
+}
+
 .options {
   width: 25%;
   height: 100%;
-  overflow: auto;
+  overflow: overlay;
   background: #fff;
 }
 </style>
@@ -315,6 +489,7 @@ export default {
 .dimple-lowcode-conatiner .vue-grid-item {
   box-sizing: border-box;
   touch-action: none;
+  min-height: 1px !important;
   /* overflow: hidden; */
 }
 

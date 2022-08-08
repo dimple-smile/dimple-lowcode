@@ -1,14 +1,36 @@
 {
-  "name": "dimple-lowcode",
+  "name": "@dimple-smile/dimple-lowcode",
   "version": "0.1.0",
-  "private": true,
+  "description": "简单的表单设计器",
+  "main": "/lib/dimple-lowcode.umd.min.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dimple-smile/dimple-lowcode.git"
+  },
+  "keywords": [
+    "表单设计器",
+    "表单引擎",
+    "拖拉拽",
+    "低代码",
+    "lowcode"
+  ],
+  "author": "dimple-smile",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dimple-smile/dimple-lowcode.git/issues"
+  },
+  "homepage": "https://github.com/dimple-smile/dimple-lowcode.git#readme",
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build:lib": "vue-cli-service build --target lib --name dimple-lowcode src/package/dimple-lowcode/index.js --dest lib",
+    "publish": "npm publish --access public"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "core-js": "^3.8.3",
-    "element-ui": "^2.15.9",
+    "element-ui": "^2.15.6",
+    "lodash": "^4.17.21",
     "vue": "^2.6.14",
     "vue-grid-layout": "^2.3.12"
   },
@@ -16,6 +38,8 @@
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "babel-plugin-component": "^1.1.1",
-    "vue-template-compiler": "^2.6.14"
+    "lodash-webpack-plugin": "^0.11.6",
+    "vue-template-compiler": "^2.6.14",
+    "webpack-bundle-analyzer": "^4.5.0"
   }
 }

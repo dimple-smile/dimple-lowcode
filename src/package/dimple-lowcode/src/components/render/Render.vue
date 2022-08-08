@@ -1,24 +1,43 @@
+<template>
+  <div>
+    <FormItem v-bind="value.formItemDefaultProps">
+      <RenderComponent v-if="customComponent" :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
+    </FormItem>
+  </div>
+</template>
+
 <script>
+import { FormItem } from '../form'
+import RenderComponent from './RenderComponent.vue'
+
 export default {
+  components: { FormItem, RenderComponent },
   props: {
+    value: {},
     materials: {},
-    component: {},
-    componentName: {},
-    props: {},
   },
-  render(h) {
-    let component = this.component
-    if (!component) {
+  computed: {
+    customComponent() {
+      let res = null
       const materials = this.materials || []
       for (const materialItem of materials) {
         const components = materialItem.components || []
-        const componentItem = components.find((item) => item.key === this.componentName)
-        component = componentItem && componentItem.component
-        if (component) break
+        const componentItem = components.find((item) => item.key === this.value.key)
+        res = componentItem && componentItem.component
+        if (res) break
       }
-    }
-    if (!component) return
-    return h(component, { props: this.props || {} })
+      return res
+    },
+    componentProps() {
+      let res = {}
+      Object.keys(this.value.props).forEach((key) => {
+        res[key] = this.value.props[key].value
+      })
+      const defaultProps = this.value.defaultProps || {}
+      return { ...defaultProps, ...res }
+    },
   },
 }
 </script>
+
+<style lang="scss" scoped></style>

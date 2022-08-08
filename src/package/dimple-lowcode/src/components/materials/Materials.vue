@@ -1,6 +1,6 @@
 <template>
   <div class="dimple-lowcode-materials">
-    <el-tabs v-model="value" stretch>
+    <el-tabs v-model="activeTab" stretch>
       <template v-for="(item, index) in materials">
         <el-tab-pane :label="item.name" :name="item.key || index"> </el-tab-pane>
       </template>
@@ -15,17 +15,23 @@
 </template>
 
 <script>
+import merge from 'lodash/merge'
+import defaultComponentConfig from '../../utils/componentConfig'
+
 export default {
   props: {
     value: {},
     materials: { type: Array, default: () => [] },
   },
+  data() {
+    return {
+      activeTab: '',
+    }
+  },
   computed: {
     activeMaterialItem() {
-      const item = this.materials.find((item, index) => {
-        let key = item.key === undefined ? index : item.key
-        return key === this.value
-      })
+      if (this.materials.length === 0) return
+      let item = this.materials.find((item, index) => this.activeTab === item.key || index)
       return item
     },
     currentComponents() {
@@ -36,11 +42,14 @@ export default {
   },
   methods: {
     drag(e, item) {
-      this.$emit('drag', e, item)
+      this.$emit('drag', e, merge(defaultComponentConfig(), item))
     },
     dragend(e, item) {
-      this.$emit('dragend', item)
+      this.$emit('dragend', merge(defaultComponentConfig(), item))
     },
+  },
+  mounted() {
+    this.activeTab = this.materials[0].key || 0
   },
 }
 </script>
@@ -54,7 +63,7 @@ export default {
 }
 .components {
   flex: 1;
-  overflow: auto;
+  overflow: overlay;
   padding: 10px 20px;
 }
 .component-item {
