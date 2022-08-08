@@ -13,6 +13,9 @@
         <el-button type="primary" size="mini" icon="el-icon-upload" @click="toPreview">预览</el-button>
         <el-button type="primary" size="mini" icon="el-icon-success" @click="save">保存</el-button>
       </div>
+      <slot name="header-append">
+        
+      </slot>
     </Form>
     <div class="selection">
       <div v-if="!isPreview" class="material" @click="currentComponent = null">
