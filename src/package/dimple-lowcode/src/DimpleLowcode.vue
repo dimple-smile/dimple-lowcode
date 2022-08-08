@@ -247,6 +247,9 @@ export default {
         for (const item of config.body) {
           body[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
         }
+
+        body.data = this.layout
+        body.config = this.formConfig
       } catch (error) {
         console.error('保存配置填写错误', error)
         return this.$message.error('保存配置填写错误')
