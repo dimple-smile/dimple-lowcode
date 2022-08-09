@@ -1,6 +1,6 @@
 {
   "name": "@dimple-smile/dimple-lowcode",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "简单的表单设计器",
   "main": "/lib/dimple-lowcode.umd.min.js",
   "repository": {
