@@ -5,8 +5,19 @@
         <div class="title" style="flex: 1">DIMPLE表单设计器</div>
       </slot>
       <div style="display: flex">
-        <FormItem label="栅格高度" type="number" v-model="rowHeight" :min="10"></FormItem>
-        <FormItem label="栅格数量" type="number" v-model="gridNum" :min="1" :max="12"></FormItem>
+        <!-- <FormItem style="flex: 1" label="组件最小高度" type="number" v-model="formConfig.rowHeight" :min="10" :label-length="8"></FormItem>
+        <div style="width: 10px"></div> -->
+        <FormItem
+          style="flex: 1"
+          label="布局模式"
+          type="select"
+          v-model="formConfig.gridNum"
+          :options="[
+            { label: '单列布局（移动端）', value: 1 },
+            { label: '双列布局', value: 2 },
+            { label: '四列布局', value: 4 },
+          ]"
+        ></FormItem>
       </div>
       <div style="flex: 1; text-align: right">
         <el-button type="primary" size="mini" icon="el-icon-setting" @click="drawer = true">表单配置</el-button>
@@ -24,8 +35,8 @@
           <grid-layout
             ref="gridlayout"
             :layout.sync="layout"
-            :col-num.sync="gridNum"
-            :row-height.sync="rowHeight"
+            :col-num.sync="formConfig.gridNum"
+            :row-height.sync="formConfig.rowHeight"
             :is-draggable="true"
             :is-resizable="true"
             :vertical-compact="true"
@@ -96,19 +107,20 @@ export default {
   },
   data() {
     return {
-      gridNum: 1,
-      rowHeight: 40,
       innerMaterials: systemMaterials(),
       layout: [],
       formConfig: {
         id: uniqueId(`${+new Date()}_`),
+        name: '',
+        rowHeight: 40,
+        gridNum: 1,
         formProps: {
           labelLength: 8,
           alignItems: 'center',
           labelPosition: 'right',
         },
         submit: {
-          show: true,
+          show: false,
           submitText: '提交',
           submitType: 'request',
           api: '',

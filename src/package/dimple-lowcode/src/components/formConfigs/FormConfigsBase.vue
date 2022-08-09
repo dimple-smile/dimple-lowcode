@@ -2,6 +2,7 @@
   <div>
     <Form label-length="10">
       <FormItem label="表单ID">{{ value.id }}</FormItem>
+      <FormItem label="表单名称" type="input" v-model="value.name" required></FormItem>
       <FormItem label="表单标签长度" type="input" v-model="value.formProps.labelLength"></FormItem>
       <FormItem label="标签方向" type="select" v-model="value.formProps.labelPosition" :options="labelPositionOptions" tip="组件内的标签方向优先"></FormItem>
       <FormItem label="标签对齐方式" type="select" v-model="value.formProps.alignItems" :options="labelAlignItemsOptions" tip="组件内的对齐方式优先"></FormItem>
