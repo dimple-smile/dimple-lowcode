@@ -14,6 +14,7 @@ export default {
 
 <style>
 body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', Helvetica, Tahoma, Arial, 'Microsoft YaHei', 微软雅黑, 黑体, Heiti, sans-serif, SimSun, 宋体, serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
@@ -21,7 +22,7 @@ body {
   margin: 0;
 }
 
-#app{
+#app {
   height: 100vh;
 }
 </style>

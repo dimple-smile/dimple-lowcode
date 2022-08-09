@@ -13,9 +13,7 @@
         <el-button type="primary" size="mini" icon="el-icon-upload" @click="toPreview">预览</el-button>
         <el-button type="primary" size="mini" icon="el-icon-success" @click="save">保存</el-button>
       </div>
-      <slot name="header-append">
-        
-      </slot>
+      <slot name="header-append"> </slot>
     </Form>
     <div class="selection">
       <div v-if="!isPreview" class="material" @click="currentComponent = null">
@@ -261,8 +259,7 @@ export default {
       }
 
       this.loading = true
-      ajax
-        .post(api, { headers, data: body })
+      ajax({ url: api, method: 'post', headers, data: body })
         .then((res) => {
           this.$message.success(successMsg || '保存成功')
           this.$emit('afterSave', res)
@@ -353,8 +350,7 @@ export default {
 
       if (isRequest) {
         this.loading = true
-        ajax
-          .post(api, { headers, data: body })
+        ajax({ url: api, method: 'post', headers, data: body })
           .then((res) => {
             this.$message.success(successMsg || '提交成功')
             this.$emit('afterSubmit', res)

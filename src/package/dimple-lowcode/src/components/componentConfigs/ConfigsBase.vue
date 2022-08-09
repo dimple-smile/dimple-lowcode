@@ -12,9 +12,11 @@
     <FormItem label="默认值设置">
       <el-button style="width: 100%" @click="defaultValueDialogVisible = true" size="mini" icon="el-icon-edit">录入</el-button>
     </FormItem>
-    <FormItem v-if="Object.keys(value.props).length" label="组件参数" aign-items="flex-start">
+    <FormItem v-if="Object.keys(value.props).length" label="组件参数" align-items="flex-start">
       <template v-for="(item, key) in value.props">
-        <el-button style="width: 100%; magirn-botton: 10px" @click="showPropsItemEditor(item)" size="mini" icon="el-icon-edit">{{ item.label }}</el-button>
+        <div style="margin-bottom: 10px;">
+          <el-button style="width: 100%; magirn-botton: 10px" @click="showPropsItemEditor(item)" size="mini" icon="el-icon-edit">{{ item.label }}</el-button>
+        </div>
       </template>
     </FormItem>
     <FormItem label="隐藏该项" type="switch" v-model="value.config.hidden" tip="预览和发布时隐藏该项"></FormItem>
