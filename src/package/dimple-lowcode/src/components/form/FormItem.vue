@@ -35,7 +35,7 @@
         :disabled="disabled"
         clearable
         @input="handleNumberInput"
-        @change="change"
+        @change="handleNumberInputChange"
         @blur="handleNumberBlur"
       ></el-input>
       <el-input
@@ -363,7 +363,7 @@ export default {
     },
     px2vw(px) {
       if (!px) return px
-      if (px.toString().indexOf('%') > -1) return
+      if (px.toString().indexOf('%') > -1) return px
       const pxNumber = Number(px.toString().replace('px', ''))
       if (Number.isNaN(pxNumber)) return px
       return Number(((100 * pxNumber) / 1920).toFixed(3)) + 'vw'
@@ -379,14 +379,30 @@ export default {
       if (value.toString().indexOf('e') > -1) return (this.innerValue = innerValue)
       if (Number.isNaN(Number(value))) return (this.innerValue = innerValue)
       if (Number(value) > Number(max)) return (this.innerValue = max)
-      if (Number(value) < Number(min)) return (this.innerValue = min)
+      // if (Number(value) < Number(min)) return (this.innerValue = min)
     },
     handleNumberBlur() {
+      const { min = 0 } = this.$attrs
+
       let value = ''
       if (this.innerValue === '') value = ''
       if (this.innerValue !== '') value = Number(this.innerValue)
-      this.$emit('input', value)
-      this.$emit('change', value)
+      if (Number(value) < Number(min)) {
+        value = Number(min)
+        this.innerValue = min
+      }
+      this.change(value)
+    },
+    handleNumberInputChange(e) {
+      const { min = 0 } = this.$attrs
+      let value = ''
+      if (this.innerValue === '') value = ''
+      if (this.innerValue !== '') value = Number(this.innerValue)
+      if (Number(value) < Number(min)) {
+        value = Number(min)
+        this.innerValue = min
+      }
+      this.change(value)
     },
     handleFloatInput(value) {
       this.resetError()

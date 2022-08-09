@@ -17,6 +17,7 @@
             { label: '双列布局', value: 2 },
             { label: '四列布局', value: 4 },
           ]"
+          @change="handleGridChange"
         ></FormItem>
       </div>
       <div style="flex: 1; text-align: right">
@@ -42,6 +43,7 @@
             :vertical-compact="true"
             :use-css-transforms="true"
             :auto-size="true"
+            :is-bounded="true"
           >
             <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="innerPreview">
               <div class="content-component-item" @click.stop="componentItemClickHandle(item)">
@@ -250,6 +252,8 @@ export default {
       const body = {}
       let successMsg = ''
       let errorMsg = ''
+      const formConfig = this.formConfig
+      if (!formConfig.name) return this.$message.error('表单名称必填')
       try {
         const config = this.formConfig.save
         api = config.api
@@ -375,6 +379,19 @@ export default {
             this.loading = false
           })
       }
+    },
+    handleGridChange() {
+      const changeIndex = []
+      for (let i = 0; i < this.layout.length; i++) {
+        const item = this.layout[i]
+        const nextItem = this.layout[i + 1]
+        if (!nextItem) continue
+        if (nextItem.y === item.y) changeIndex.push(i)
+      }
+
+      changeIndex.forEach((index, i) => {
+        this.layout[index].y += i + 1
+      })
     },
   },
   mounted() {

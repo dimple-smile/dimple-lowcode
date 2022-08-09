@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FormItem v-bind="value.formItemDefaultProps">
+    <FormItem contentWidth="100%" v-bind="value.formItemDefaultProps">
       <RenderComponent v-if="customComponent" :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
     </FormItem>
   </div>
