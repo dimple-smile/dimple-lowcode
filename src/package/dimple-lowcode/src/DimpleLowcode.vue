@@ -106,6 +106,8 @@ export default {
     config: { type: Object, default: () => {} },
     data: { type: Array, default: () => [] },
     preview: { type: Boolean, default: null },
+    saveRequestConfig: { type: Function, default: null },
+    submitRequestConfig: { type: Function, default: null },
   },
   data() {
     return {
@@ -171,7 +173,7 @@ export default {
   watch: {
     data: {
       handler: function (value) {
-        this.$set(this.layout, 'layout', value || [])
+        this.setLayout(value)
       },
       deep: true,
       immediate: true,
@@ -275,7 +277,14 @@ export default {
       }
 
       this.loading = true
-      ajax({ url: api, method: 'post', headers, data: body })
+      let req = { url: api, method: 'post', headers, data: body }
+      try {
+        if (this.saveRequestConfig) req = this.saveRequestConfig(req)
+      } catch (error) {
+        console.error('自定义保存配置填写错误', error)
+        return this.$message.error('保存配置填写错误')
+      }
+      ajax(req)
         .then((res) => {
           this.$message.success(successMsg || '保存成功')
           this.$emit('afterSave', res)
@@ -366,7 +375,14 @@ export default {
 
       if (isRequest) {
         this.loading = true
-        ajax({ url: api, method: 'post', headers, data: body })
+        let req = { url: api, method: 'post', headers, data: body }
+        try {
+          if (this.submitRequestConfig) req = this.submitRequestConfig(req)
+        } catch (error) {
+          console.error('提交配置填写错误', error)
+          return this.$message.error('提交配置填写错误')
+        }
+        ajax(req)
           .then((res) => {
             this.$message.success(successMsg || '提交成功')
             this.$emit('afterSubmit', res)
@@ -392,6 +408,9 @@ export default {
       changeIndex.forEach((index, i) => {
         this.layout[index].y += i + 1
       })
+    },
+    setLayout(data) {
+      this.$set(this, 'layout', data || [])
     },
   },
   mounted() {
