@@ -45,7 +45,7 @@
             :auto-size="true"
             :is-bounded="true"
           >
-            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="innerPreview">
+            <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i" :static="isPreview">
               <div class="content-component-item" @click.stop="componentItemClickHandle(item)">
                 <div v-if="!isPreview" class="content-component-item-mask" :class="{ 'content-component-item-mask-active': currentComponent && currentComponent.i === item.i }">
                   <i class="icon el-icon-delete" @click="removeItem(item)"></i>
