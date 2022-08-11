@@ -86,6 +86,7 @@ import { validate } from './utils/validate'
 import axios from 'axios'
 import merge from 'lodash/merge'
 import uniqueId from 'lodash/uniqueId'
+import { JSON } from 'lodash/_freeGlobal'
 
 const ajax = axios.create()
 
@@ -409,7 +410,7 @@ export default {
       })
     },
     setLayout(data) {
-      this.$set(this, 'layout', data || [])
+      this.$set(this, 'layout', JSON.parse(JSON.stringify(data || [])))
     },
   },
   mounted() {
