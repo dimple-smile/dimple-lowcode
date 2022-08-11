@@ -75,8 +75,8 @@ export default {
 | -| -| -| - | - |
 | materials | 素材列表 | Array | [] | 会添加于系统库之后 |
 | config | 配置项 | Object | {} | 可以填一些初始的表单配置 |
-| data | 渲染的表单数据 | Array | [] | 用于渲染表单页面，如果数组长度大于0，则代表为预览模式 |
-| preview | 是否为预览模式 | Boolean | null | 如果设置此属性，则根据此属性设置预览模式，否则根据data和组件内的操作按钮决定。 |
+| data | 渲染的表单数据 | Array | [] | 用于预置渲染或者预览渲染表单页面 |
+| preview | 是否为预览模式 | Boolean | null | 是否为预览模式 |
 | saveRequestConfig | 保存时的自定义配置 | Function | null | 此配置为一个函数，会带上当前框架已经校验完成的axios请求配置 |
 | submitRequestConfig | 提交时的自定义配置 | Function | null | 此配置为一个函数，会带上当前框架已经校验完成的axios请求配置 |
 

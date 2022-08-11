@@ -156,7 +156,6 @@ export default {
     isPreview() {
       if (this.preview === true) return true
       if (this.preview === false) return false
-      if (this.data.length > 0) return true
       return this.innerPreview
     },
     mouseInGrid() {
