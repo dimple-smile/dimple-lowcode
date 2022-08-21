@@ -1,0 +1,6 @@
+
+    import { Autocomplete,Button,Checkbox,CheckboxGroup,CheckboxButton,Collapse,DatePicker,CollapseItem,Dialog,Drawer,Form,Icon,FormItem,Input,Option,OptionGroup,Radio,RadioGroup,Switch,Select,TableColumn,Table,TabPane,Tabs,TimePicker,TimeSelect,Tooltip } from 'element-ui'
+    import './element-variables.scss'
+    export { Loading,MessageBox,Notification,Message } from 'element-ui'
+    export const ElComponents = {[Autocomplete.name]: Autocomplete,[Button.name]: Button,[Checkbox.name]: Checkbox,[CheckboxGroup.name]: CheckboxGroup,[CheckboxButton.name]: CheckboxButton,[Collapse.name]: Collapse,[DatePicker.name]: DatePicker,[CollapseItem.name]: CollapseItem,[Dialog.name]: Dialog,[Drawer.name]: Drawer,[Form.name]: Form,[Icon.name]: Icon,[FormItem.name]: FormItem,[Input.name]: Input,[Option.name]: Option,[OptionGroup.name]: OptionGroup,[Radio.name]: Radio,[RadioGroup.name]: RadioGroup,[Switch.name]: Switch,[Select.name]: Select,[TableColumn.name]: TableColumn,[Table.name]: Table,[TabPane.name]: TabPane,[Tabs.name]: Tabs,[TimePicker.name]: TimePicker,[TimeSelect.name]: TimeSelect,[Tooltip.name]: Tooltip};
+  

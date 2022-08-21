@@ -1,14 +1,12 @@
 <template>
   <div id="app">
-    <dimple-lowcode></dimple-lowcode>
+    <router-view style="height: 100%"></router-view>
   </div>
 </template>
 
 <script>
-import { DimpleLowcode } from './package/dimple-lowcode'
 export default {
   name: 'App',
-  components: { DimpleLowcode },
 }
 </script>
 

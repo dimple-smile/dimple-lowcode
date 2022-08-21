@@ -23,22 +23,29 @@
   "scripts": {
     "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build:lib": "vue-cli-service build --target lib --name dimple-lowcode src/package/dimple-lowcode/index.js --dest lib",
-    "publish": "npm publish --access public"
+    "build:lib": "vue-cli-service build --target lib --name dimple-lowcode src/packages/index.js --dest lib",
+    "publish": "npm publish --access public",
+    "element-ui": "node scripts/element-ui"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.6",
     "lodash": "^4.17.21",
+    "sortablejs": "^1.15.0",
     "vue": "^2.6.14",
-    "vue-grid-layout": "^2.3.12"
+    "vue-router": "^3.5.4",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "babel-plugin-component": "^1.1.1",
+    "fast-glob": "^3.2.11",
+    "fs-extra": "^10.1.0",
     "lodash-webpack-plugin": "^0.11.6",
+    "sass": "^1.54.4",
+    "sass-loader": "^13.0.2",
     "vue-template-compiler": "^2.6.14",
     "webpack-bundle-analyzer": "^4.5.0"
   }
