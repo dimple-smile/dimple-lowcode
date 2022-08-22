@@ -82,7 +82,7 @@ module.exports = {
   // 'cascader-panel': './packages/cascader-panel/index.js',
   // avatar: './packages/avatar/index.js',
   drawer: './packages/drawer/index.js',
-  // popconfirm: './packages/popconfirm/index.js',
+  popconfirm: './packages/popconfirm/index.js',
   // skeleton: './packages/skeleton/index.js',
   // 'skeleton-item': './packages/skeleton-item/index.js',
   // empty: './packages/empty/index.js',

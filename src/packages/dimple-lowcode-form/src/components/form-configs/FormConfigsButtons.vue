@@ -1,17 +1,23 @@
 <template>
   <div class="dimple-lowcode-form-buttons">
     <div class="title">
-      <TitleDividev style="padding: 0">
-        共 <b>{{ value.buttons.length }}</b> 个操作按钮
-      </TitleDividev>
-      <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加按钮</el-button>
+      <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加操作按钮</el-button>
+      <span>
+        共 <span style="color: #4066e2">{{ value.buttons.length }}</span> 个操作按钮
+      </span>
     </div>
 
     <el-collapse v-if="value.buttons.length" v-model="activeName" accordion>
-      <el-collapse-item v-for="(item, index) in value.buttons" :name="item.id">
+      <el-collapse-item v-for="(item, index) in value.buttons" :name="index + ''">
         <template #title>
-          {{ index + 1 }}.{{ item.text }}
-          <el-button icon="el-icon-delete" size="mini" type="text" @click="value.buttons.splice(index, 1)" style="color: #f56c6c; margin-left: 20px">删除</el-button>
+          <div class="collapse-item-title">
+            <span> {{ index + 1 }}.{{ item.text }}</span>
+            <el-popconfirm placement="top-end" title="确定删除吗？" @confirm="value.buttons.splice(index, 1)">
+              <template #reference>
+                <el-button size="mini" type="text" style="color: #f56c6c; margin: 0 20px">删除</el-button>
+              </template>
+            </el-popconfirm>
+          </div>
         </template>
         <Form label-length="10">
           <FormItem label="按钮文本" type="input" v-model="item.text"></FormItem>
@@ -58,7 +64,7 @@ export default {
   },
   data() {
     return {
-      activeName: '',
+      activeName: '0',
       operateTypeOptions: Object.values(buttonOperateTypes),
       btnTypeOptions: [
         { value: 'default', label: '默认（白）' },
@@ -80,6 +86,9 @@ export default {
 </script>
 
 <style scoped>
+.dimple-lowcode-form-buttons{
+  padding-right: 10px;
+}
 .dimple-lowcode-form-buttons .title {
   padding: 0;
   margin-bottom: 20px;
@@ -96,5 +105,12 @@ export default {
 .dimple-lowcode-form-buttons .add-btn {
   text-align: center;
   padding-top: 20px;
+}
+
+.dimple-lowcode-form-buttons .collapse-item-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

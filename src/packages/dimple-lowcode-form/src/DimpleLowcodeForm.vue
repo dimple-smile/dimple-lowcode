@@ -8,7 +8,7 @@
         :preview="isPreview"
         :component-list="(currentMaterial && currentMaterial.components) || []"
         aside-class="dimple-lowcode-form-aside"
-        container-class="dimple-lowcode-form-container"
+        :container-style="formConfig.style"
         component-list-class="dimple-lowcode-form-component-list"
         component-item-class="dimple-lowcode-form-component-item-cotainer"
         :column-width="formConfig.columnWidth"
@@ -405,7 +405,7 @@ export default {
 }
 
 .material {
-  width: 20vw;
+  width: 24vw;
   height: 100%;
   overflow: hidden;
   background: #fff;
@@ -414,7 +414,7 @@ export default {
 }
 
 .options {
-  width: 20vw;
+  width: 24vw;
   height: 100%;
   overflow: overlay;
   background: #fff;
@@ -425,11 +425,7 @@ export default {
 
 <style>
 .dimple-lowcode-form-aside {
-  width: 20vw;
-}
-
-.dimple-lowcode-form-container {
-  padding: 20px;
+  width: 24vw;
 }
 
 .dimple-lowcode-form-component-list {
@@ -441,18 +437,24 @@ export default {
 
   display: flex;
   flex-wrap: wrap;
-  padding-left: 18px;
+  padding-left: 20px;
+  height: 100%;
+  align-content: flex-start;
+  justify-content: space-between;
+  padding-right: 4px;
 }
 
 .dimple-lowcode-form-component-item-cotainer {
   width: 50%;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  padding-right: 16px;
+
   box-sizing: border-box;
-  padding-right: 18px;
 }
 
 .dimple-lowcode-form-component-item {
   border: 1px solid #ddd;
+  border-radius: 4px;
   color: #333333;
   font-size: 14px;
   text-align: center;
@@ -461,6 +463,7 @@ export default {
   line-height: 60px;
   cursor: pointer;
   transition: all 0.3s;
+  cursor: move;
 }
 
 .dimple-lowcode-form-component-item:hover {

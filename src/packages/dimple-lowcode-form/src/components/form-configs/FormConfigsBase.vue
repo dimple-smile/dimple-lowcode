@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form label-length="10">
+    <Form :label-length="10">
       <FormItem label="表单ID">{{ value.id }}</FormItem>
       <FormItem label="表单名称" type="input" v-model="value.name" required></FormItem>
       <FormItem label="表单标签长度" type="input" v-model="value.formProps.labelLength"></FormItem>

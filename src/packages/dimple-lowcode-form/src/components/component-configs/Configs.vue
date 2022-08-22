@@ -6,7 +6,7 @@
       </div>
 
       <div class="main" v-if="activeTab">
-        <Form label-length="7">
+        <Form :label-length="8">
           <!-- 组件基本配置 -->
           <ConfigsBase v-if="activeTab.key === 'base'" v-model="value" :materials="materials" />
 
@@ -44,11 +44,8 @@ export default {
   },
   computed: {
     tabs() {
-      return Object.keys(this.value.config)
-        .map((key) => {
-          return { key, ...this.value.config[key] }
-        })
-        .filter((item) => !!item.show)
+      if (!this.value) return []
+      return Object.keys(this.value.config).map((key) => ({ key, ...this.value.config[key] }))
     },
   },
 }

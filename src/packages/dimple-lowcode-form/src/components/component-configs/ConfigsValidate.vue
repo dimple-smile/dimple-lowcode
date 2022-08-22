@@ -1,6 +1,6 @@
 <template>
   <div>
-    <FormItem label="字段名" type="input" v-model="value.filedName"></FormItem>
+    <FormItem v-if="!value.hideFiledName" label="字段名" type="input" v-model="value.filedName"></FormItem>
     <FormItem label="数据类型" v-model="value.valueType" type="select" :options="valueTypeOptions"> </FormItem>
     <FormItem label="必填" v-model="value.formItemDefaultProps.required" type="switch"> </FormItem>
     <FormItem label="必填校验提示" v-model="value.config.validate.requiredValidateMsg" type="input"> </FormItem>

@@ -4,11 +4,11 @@ export default () => {
   return {
     id: uniqueId(`${+new Date()}_`),
     filedName: uniqueId(`${+new Date()}_`),
+    hideFiledName: false,
     name: '',
     component: '',
     valueType: valueTypes.string.value,
     value: '',
-    containerStyle: {},
     style: {},
     props: {},
     defaultProps: {},
@@ -20,13 +20,10 @@ export default () => {
     },
     config: {
       base: {
-        show: true,
         name: '基础配置',
         defaultValue: { inputMode: 'default', urlParamName: '' },
       },
       validate: {
-        show: true,
-        visibility: true,
         name: '数据校验配置',
         disabled: false,
         requiredValidateMsg: '',
@@ -38,7 +35,6 @@ export default () => {
         rules: [],
       },
       filter: {
-        show: true,
         name: '数据收集配置',
         visible: false,
         type: '',

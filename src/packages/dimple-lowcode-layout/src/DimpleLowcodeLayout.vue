@@ -15,11 +15,30 @@
         </div>
       </div>
       <div class="content dimple-lowcode-layout-content">
-        <div class="render-container" ref="render-container" data-id="render-container" :class="containerClass" @mousemove.capture="handleComponentItemMouseMove" @mouseleave="currentRenderKey = null">
+        <div
+          class="render-container"
+          ref="render-container"
+          data-id="render-container"
+          :class="containerClass"
+          :style="containerStyle"
+          @mousemove.capture="handleComponentItemMouseMove"
+          @mouseleave="currentRenderKey = null"
+        >
           <slot name="render-header"></slot>
-          <div v-for="(item, index) in value" class="render-item" :style="getRenderItemStyle(item)" :key="item[renderKey]" :data-render-key="item[renderKey]" :data-component-key="item[componentKey]">
+          <div
+            v-for="(item, index) in value"
+            :class="{ 'render-item': !preview }"
+            :style="getRenderItemStyle(item)"
+            :key="item[renderKey]"
+            :data-render-key="item[renderKey]"
+            :data-component-key="item[componentKey]"
+          >
             <slot name="render-item" :data="item"> </slot>
-            <div class="render-item-mask" v-if="item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey]" @click.stop="handleComponentClick($event, item)">
+            <div
+              class="render-item-mask"
+              v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
+              @click.stop="handleComponentClick($event, item)"
+            >
               <slot name="render-item-mask">
                 <div class="render-item-mask-default">
                   <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
@@ -52,6 +71,7 @@ export default {
     preview: { type: Boolean, default: false },
     componentList: { type: Array, default: () => [] },
     asideClass: {},
+    containerStyle: { type: Object, default: () => ({}) },
     containerClass: {},
     componentListClass: {},
     componentItemClass: {},
@@ -121,11 +141,13 @@ export default {
         draggable: '.' + this.dragComponentItemClassName,
         onStart: (e) => {
           const componentKey = e.item.dataset.componentKey
-          const item = this.componentList.find((item) => item[this.componentKey] === componentKey)
+          let item = this.componentList.find((item) => item[this.componentKey] === componentKey)
+          if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
         },
         onMove: (e) => {
           e.dragged.classList.add('ghost')
+          this.$emit('update:currentComponent', null)
         },
       })
       new Sortable(renderContainer, {
@@ -135,9 +157,10 @@ export default {
         animation: 150,
         onAdd: (e) => {
           e.item.remove()
-          let pushItem = this.dragData
-          if (this.dragDataAdapter) pushItem = this.dragDataAdapter(pushItem)
-          this.value.splice(e.newIndex, 0, pushItem)
+          this.value.splice(e.newIndex, 0, this.dragData)
+
+          this.$emit('update:currentComponent', this.dragData)
+          this.currentRenderKey = this.dragData[this.renderKey]
         },
         onUpdate: (e) => {
           const oldItem = this.value[e.oldIndex]
