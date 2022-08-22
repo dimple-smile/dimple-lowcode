@@ -122,6 +122,7 @@ const formConfig = () => {
     // id: '', // 表单id，不传会自动生成
     name: '', // 表单名称
     columnWidth: '100%', // 表单项的列度
+    style: { padding: '20px' }, // 表单容器的样式
     formProps: { // 表单的配置
       labelLength: 8, // 表单下所有项目的文本宽度
       alignItems: 'center', // 表单下所有项目的内容对齐方向
