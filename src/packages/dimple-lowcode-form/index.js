@@ -1,11 +1,12 @@
 import DimpleLowcodeForm from './src/DimpleLowcodeForm.vue'
-import { valueTypes } from './src/utils/valueTypes'
-import { editTypes } from './src/utils/editTypes'
-import { filterTypes } from './src/utils/filterTypes'
-import { componentConfig } from './src/utils/componentConfig'
+export { valueTypes } from './src/utils/valueTypes'
+export { editTypes } from './src/utils/editTypes'
+export { filterTypes } from './src/utils/filterTypes'
+export { componentConfig } from './src/utils/componentConfig'
+export { formConfig, buttonOperateTypes, requestParamModeTypes } from './src/utils/formConfig'
 
 DimpleLowcodeForm.install = (Vue) => {
   Vue.component(DimpleLowcodeForm.name, DimpleLowcodeForm)
 }
-export { DimpleLowcodeForm, valueTypes, editTypes, filterTypes, componentConfig }
+export { DimpleLowcodeForm }
 export default DimpleLowcodeForm

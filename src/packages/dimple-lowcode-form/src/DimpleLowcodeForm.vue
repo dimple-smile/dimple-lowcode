@@ -106,7 +106,6 @@ import { is } from './utils/is'
 import { validate } from './utils/validate'
 import axios from 'axios'
 import merge from 'lodash/merge'
-import uniqueId from 'lodash/uniqueId'
 import defaultComponentConfig from './utils/componentConfig'
 const ajax = axios.create()
 
@@ -195,7 +194,7 @@ export default {
       this.innerPreview = true
       Message.success('按下ESC键可以退出预览')
     },
-    save() {
+    async save() {
       let api = ''
       const headers = {}
       const body = {}
@@ -226,7 +225,7 @@ export default {
       this.loading = true
       let req = { url: api, method: 'post', headers, data: body }
       try {
-        if (this.saveRequestConfig) req = this.saveRequestConfig(req)
+        if (this.saveRequestConfig) req = await this.saveRequestConfig(req)
       } catch (error) {
         console.error('自定义保存配置填写错误', error)
         return Message.error('保存配置填写错误')
@@ -244,7 +243,7 @@ export default {
           this.loading = false
         })
     },
-    btnHandle(config) {
+    async btnHandle(config) {
       if (!this.isPreview) return
       let operateType = ''
       let api = ''
@@ -324,7 +323,7 @@ export default {
         this.loading = true
         let req = { url: api, method: 'post', headers, data: body }
         try {
-          if (this.btnRequestConfig) req = this.btnRequestConfig(req, config)
+          if (this.btnRequestConfig) req = await this.btnRequestConfig(req, config)
         } catch (error) {
           console.error('自定义按钮配置填写错误', error)
           return Message.error('自定义按钮配置填写错误')

@@ -5,10 +5,10 @@
 </template>
 
 <script>
-// import { DimpleLowcodeForm } from '../index'
+import { DimpleLowcodeForm } from '../index'
 export default {
   name: 'App',
-  // components: { DimpleLowcodeForm },
+  components: { DimpleLowcodeForm },
 }
 </script>
 
