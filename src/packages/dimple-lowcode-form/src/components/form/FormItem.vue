@@ -1,10 +1,5 @@
-<!--
- * @Author: xiechaopeng
- * @Date: 2021-06-15 09:56:15
- * @Description: Aiot表单项
--->
 <template>
-  <div class="ui-aiot-form-item" :class="[type]" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
+  <div class="dimple-lowcode-form-item" :class="[type]" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
     <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
       <span v-if="required" class="required-icon">*</span>
       <span>{{ label }}</span>
@@ -200,6 +195,18 @@
           </template>
         </el-autocomplete>
       </slot>
+      <template v-if="type.indexOf('mobile-') > -1">
+        <FormItemMoibile
+          v-model="innerValue"
+          :type="type.replace('mobile-', '')"
+          :options="computeOptions"
+          :optionsLabelKey="optionsLabelKey"
+          :optionsValueKey="optionsValueKey"
+          :placeholder="placeholder"
+          v-bind="$attrs"
+          @change="change"
+        />
+      </template>
       <slot v-else></slot>
       <div v-if="innerError" class="error-message" :class="{ block: blockMessage, inline: !blockMessage }">
         <i class="iconfont icontishixinxi error-message-icon"></i>
@@ -215,6 +222,7 @@
 <script>
 import { ElComponents } from '../element-ui'
 import { resizeObserver } from '../../utils/resizeObserver'
+import FormItemMoibile from './FormItemMoibile.vue'
 
 const types = {
   text: 'text',
@@ -238,6 +246,7 @@ export default {
   name: 'FormItem',
   components: {
     ...ElComponents,
+    FormItemMoibile,
   },
   props: {
     type: { type: String, default: '' },
@@ -262,7 +271,8 @@ export default {
     marginBottom: { type: String, default: '' },
     horizontalRadio: { type: Boolean, default: false },
     horizontalCheckbox: { type: Boolean, default: false },
-    inputFilterString: { type: Array, default: () => [',', '。', '，', '!', '$', '^', '`', '、'] },
+    // inputFilterString: { type: Array, default: () => [',', '。', '，', '!', '$', '^', '`', '、'] },
+    inputFilterString: { type: Array, default: () => [] },
   },
   data() {
     return {
@@ -355,7 +365,7 @@ export default {
     handleInput(value) {
       const inputFilterString = this.inputFilterString
       let filterValue = value
-      filterValue = value.replace(/\s*/g, '')
+      // filterValue = value.replace(/\s*/g, '')
       for (const item of inputFilterString) {
         filterValue = filterValue.replace(item, '')
       }
@@ -456,7 +466,7 @@ export default {
 </script>
 
 <style scoped>
-.ui-aiot-form-item {
+.dimple-lowcode-form-item {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -550,11 +560,11 @@ export default {
 
 <style>
 /* 有全局样式被覆盖了，这里处理一下 */
-.ui-aiot-form-item .el-textarea__inner {
+.dimple-lowcode-form-item .el-textarea__inner {
   font-size: 15px !important;
   resize: none;
 }
-.ui-aiot-form-item .el-range-input {
+.dimple-lowcode-form-item .el-range-input {
   font-size: 14px !important;
 }
 </style>

@@ -73,8 +73,9 @@ export default {
 [(Back to top)](#目录)
 | 参数名 | <img width="180px" /> 意义 <img width="180px" /> | 类型 | <img width="120px" /> 默认值 <img width="120px" /> | 说明 |
 | -| -| -| - | - |
+| systemMaterials | 系统素材列表 | Array | systemMaterials() | 系统库素材库，import { systemMaterials } from '@dimple-smile/dimple-lowcode' 可以拿到 |
 | materials | 素材列表 | Array | [] | 会添加于系统库之后 |
-| config | 配置项 | Object | {} | 可以填一些初始的表单配置 |
+| config | 配置项 | Object | {} | 可以填一些初始的表单配置，支持sync双向绑定 |
 | data | 渲染的表单数据 | Array | [] | 用于预置渲染或者预览渲染表单页面 |
 | preview | 是否为预览模式 | Boolean | null | 是否为预览模式 |
 | saveRequestConfig | 保存时的自定义配置 | Function | null | 此配置为一个函数，会带上当前框架已经校验完成的axios请求配置 |

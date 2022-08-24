@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     handleChange(tab) {
-      const item = this.options.find((item) => item[this.valueKey] === tab.name)
+      const item = this.options[Number(tab.index)]
       this.$emit('input', item)
       this.$emit('change', item)
     },

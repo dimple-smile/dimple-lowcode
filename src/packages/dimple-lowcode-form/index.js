@@ -4,6 +4,7 @@ export { editTypes } from './src/utils/editTypes'
 export { filterTypes } from './src/utils/filterTypes'
 export { componentConfig } from './src/utils/componentConfig'
 export { formConfig, buttonOperateTypes, requestParamModeTypes } from './src/utils/formConfig'
+export { systemMaterials } from './src/materials/system'
 
 DimpleLowcodeForm.install = (Vue) => {
   Vue.component(DimpleLowcodeForm.name, DimpleLowcodeForm)

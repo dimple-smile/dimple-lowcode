@@ -1,5 +1,5 @@
 <template>
-  <div class="dimple-lowcode-form-conatiner" v-loading="loading">
+  <div class="dimple-lowcode-form-conatiner">
     <Form v-bind="formConfig.formProps" style="height: 100%">
       <DimpleLowcodeLayout
         ref="dimpleLayout"
@@ -19,39 +19,51 @@
             <slot name="logo">
               <div class="title">DIMPLE表单设计器</div>
             </slot>
-            <div class="header-content">
-              <div class="header-content-item">
-                <FormItem
-                  style="flex: 1"
-                  label="布局模式"
-                  type="select"
-                  v-model="formConfig.columnWidth"
-                  :options="[
-                    { label: '单列布局（移动端）', value: '100%' },
-                    { label: '双列布局', value: '50%' },
-                    { label: '四列布局', value: '25%' },
-                  ]"
-                ></FormItem>
+            <slot name="header-content">
+              <div class="header-content">
+                <div class="header-content-item">
+                  <FormItem
+                    style="flex: 1"
+                    label="布局模式"
+                    type="select"
+                    v-model="formConfig.columnWidth"
+                    :options="[
+                      { label: '单列布局（移动端）', value: '100%' },
+                      { label: '双列布局', value: '50%' },
+                      { label: '四列布局', value: '25%' },
+                    ]"
+                  ></FormItem>
+                </div>
               </div>
-            </div>
-            <el-button size="mini" @click="drawer = true">表单配置</el-button>
-            <slot name="header-append"> </slot>
+            </slot>
+            <slot name="header-append">
+              <el-button size="mini" @click="drawer = true">表单配置</el-button>
+            </slot>
           </Form>
         </template>
 
         <template #component-header>
           <Tabs v-model="currentMaterial" :options="innerMaterials" />
-          <div style="border-right: 1px solid #ddd">
-            <TitleDividev>组件列表</TitleDividev>
+          <div v-if="currentMaterial" style="border-right: 1px solid #ddd">
+            <TitleDividev>
+              组件列表
+              <el-tooltip v-if="currentMaterial && currentMaterial.tip" effect="dark" :content="currentMaterial.tip" placement="top">
+                <i class="el-icon-warning" style="color: #aaa"></i>
+              </el-tooltip>
+            </TitleDividev>
           </div>
         </template>
 
-        <template #component-list>
-          <Tabs v-model="currentMaterial" :options="innerMaterials" />
+        <template #component-list="{ data }">
+          <div v-for="item in data" class="dimple-lowcode-form-component-item-cotainer" :key="item.key">
+            <div class="component-item dimple-lowcode-form-component-item">
+              {{ item.name }}
+            </div>
+          </div>
         </template>
 
         <template #component-item="{ data }">
-          <div class="dimple-lowcode-form-component-item">
+          <div :key="data.key" class="dimple-lowcode-form-component-item">
             {{ data.name }}
           </div>
         </template>
@@ -69,9 +81,11 @@
         </template>
 
         <template #panel>
-          <div class="options">
-            <ComponentConfigs v-model="currentComponent" :materials="innerMaterials" />
-          </div>
+          <slot name="panel">
+            <div class="options">
+              <ComponentConfigs v-model="currentComponent" :materials="innerMaterials" />
+            </div>
+          </slot>
         </template>
 
         <template #footer>
@@ -99,13 +113,16 @@ import { ComponentConfigs } from './components/component-configs'
 import { FormConfigs } from './components/form-configs'
 import { Render } from './components/render'
 import { Form, FormItem } from './components/form'
-import systemMaterials from './materials/system'
+import { systemMaterials } from './materials/system'
 import { formConfig } from './utils/formConfig'
 import { getQueryByKey } from './utils/getQueryByKey'
 import { is } from './utils/is'
 import { validate } from './utils/validate'
 import axios from 'axios'
 import merge from 'lodash/merge'
+import isEqual from 'lodash/isEqual'
+import cloneDeep from 'lodash/cloneDeep'
+
 import defaultComponentConfig from './utils/componentConfig'
 const ajax = axios.create()
 
@@ -123,6 +140,7 @@ export default {
     FormItem,
   },
   props: {
+    systemMaterials: { type: Array, default: () => systemMaterials() },
     materials: { type: Array, default: () => [] },
     config: { type: Object, default: () => {} },
     data: { type: Array, default: () => [] },
@@ -130,19 +148,14 @@ export default {
     saveRequestConfig: { type: Function, default: null },
     btnRequestConfig: { type: Function, default: null },
   },
-  directives: {
-    loading: Loading.directive,
-  },
   data() {
     return {
-      innerMaterials: systemMaterials(),
       currentMaterial: null,
       layout: [],
       formConfig: formConfig(),
       currentComponent: null,
       drawer: false,
       innerPreview: false,
-      loading: false,
     }
   },
   computed: {
@@ -150,6 +163,9 @@ export default {
       if (this.preview === true) return true
       if (this.preview === false) return false
       return this.innerPreview
+    },
+    innerMaterials() {
+      return [...this.systemMaterials, this.materials]
     },
   },
   watch: {
@@ -162,17 +178,18 @@ export default {
     },
     config: {
       handler: function (value) {
-        this.formConfig = merge(JSON.parse(JSON.stringify(this.formConfig)), value)
+        if (isEqual(value, this.formConfig)) return
+        this.formConfig = merge(cloneDeep(this.formConfig), value)
       },
       deep: true,
       immediate: true,
     },
-    materials: {
+    formConfig: {
       handler: function (value) {
-        this.innerMaterials.push(...(value || []))
+        if (isEqual(value, this.formConfig)) return
+        this.$emit('update:config', value)
       },
       deep: true,
-      immediate: true,
     },
   },
   methods: {
@@ -221,8 +238,7 @@ export default {
         console.error('保存配置填写错误', error)
         return Message.error('保存配置填写错误')
       }
-
-      this.loading = true
+      const loadingInstance = Loading.service({ fullscreen: true })
       let req = { url: api, method: 'post', headers, data: body }
       try {
         if (this.saveRequestConfig) req = await this.saveRequestConfig(req)
@@ -240,7 +256,7 @@ export default {
           this.$emit('afterSaveError', err)
         })
         .finally(() => {
-          this.loading = false
+          loadingInstance.close()
         })
     },
     async btnHandle(config) {
@@ -320,7 +336,8 @@ export default {
       if (isLink) return (window.location.href = link)
 
       if (isRequest) {
-        this.loading = true
+        const loadingInstance = Loading.service({ fullscreen: true })
+
         let req = { url: api, method: 'post', headers, data: body }
         try {
           if (this.btnRequestConfig) req = await this.btnRequestConfig(req, config)
@@ -338,12 +355,12 @@ export default {
             this.$emit('afterBtnRequestError', err)
           })
           .finally(() => {
-            this.loading = false
+            loadingInstance.close()
           })
       }
     },
     setLayout(data) {
-      this.$set(this, 'layout', JSON.parse(JSON.stringify(data || [])))
+      this.$set(this, 'layout', cloneDeep(data || []))
     },
   },
   mounted() {

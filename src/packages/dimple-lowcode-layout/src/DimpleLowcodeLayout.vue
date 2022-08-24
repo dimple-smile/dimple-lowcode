@@ -6,8 +6,8 @@
     <div class="main">
       <div v-show="!preview" class="aside" :class="asideClass">
         <slot name="component-header"></slot>
-        <div ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
-          <div v-for="item in componentList" class="component-item" :class="componentItemClass" :data-component-key="item[componentKey]">
+        <div v-if="!loading" ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
+          <div v-for="item in componentList" class="component-item" :class="componentItemClass" :data-component-key="item[componentKey]" :key="item[componentKey]">
             <slot name="component-item" :data="item">
               {{ item.name }}
             </slot>
@@ -29,7 +29,7 @@
             v-for="(item, index) in value"
             :class="{ 'render-item': !preview }"
             :style="getRenderItemStyle(item)"
-            :key="item[renderKey]"
+            :key="item[componentKey] + item[renderKey]"
             :data-render-key="item[renderKey]"
             :data-component-key="item[componentKey]"
           >
@@ -61,6 +61,10 @@
 
 <script>
 import Sortable from 'sortablejs'
+import uniqueId from 'lodash/uniqueId'
+import cloneDeep from 'lodash/cloneDeep'
+import differenceBy from 'lodash/differenceBy'
+
 const defaultGhostStyle = { width: '100%', height: '40px', background: '#F0F2F5', opacity: '0.7' }
 
 export default {
@@ -88,6 +92,9 @@ export default {
       ghostClass: 'ghost',
       dragData: {},
       currentRenderKey: null,
+      materialsSortable: null,
+      renderSortable: null,
+      loading: false,
     }
   },
   computed: {
@@ -107,6 +114,19 @@ export default {
         '--dimple-lowcode-layout-ghost-opacity': ghostStyle.opacity,
       }
       return res
+    },
+  },
+  watch: {
+    componentList: {
+      handler: function (newValue, oldValue) {
+        if (differenceBy(newValue, oldValue, 'key').length === 0) return
+        this.loading = true
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => this.init())
+        }, 100)
+      },
+      deep: true,
     },
   },
   methods: {
@@ -132,16 +152,23 @@ export default {
       this.currentRenderKey = renderKey
     },
     init() {
+      if (this.materialsSortable) this.materialsSortable.destroy()
+      if (this.renderSortable) this.renderSortable.destroy()
+
       const materialsContainer = this.$refs['component-list']
       const renderContainer = this.$refs['render-container']
 
-      new Sortable(materialsContainer, {
+      this.materialsSortable = new Sortable(materialsContainer, {
         group: { name: 'shared', pull: 'clone', put: false },
         sort: false,
         draggable: '.' + this.dragComponentItemClassName,
         onStart: (e) => {
           const componentKey = e.item.dataset.componentKey
-          let item = this.componentList.find((item) => item[this.componentKey] === componentKey)
+          let findItem = this.componentList.find((item) => item[this.componentKey] === componentKey)
+          if (!findItem) return (this.dragData = null)
+          let { component, ...other } = findItem
+          let item = cloneDeep(other)
+          item[this.renderKey] = uniqueId(`${+new Date()}_`)
           if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
         },
@@ -150,20 +177,20 @@ export default {
           this.$emit('update:currentComponent', null)
         },
       })
-      new Sortable(renderContainer, {
+      this.renderSortable = new Sortable(renderContainer, {
         group: 'shared',
         draggable: '.' + this.dragRenderItemClassName,
         ghostClass: 'ghost',
         animation: 150,
         onAdd: (e) => {
+          if (!this.dragData) return
           e.item.remove()
           this.value.splice(e.newIndex, 0, this.dragData)
-
           this.$emit('update:currentComponent', this.dragData)
           this.currentRenderKey = this.dragData[this.renderKey]
         },
         onUpdate: (e) => {
-          const oldItem = this.value[e.oldIndex]
+          const oldItem = cloneDeep(this.value[e.oldIndex])
           this.value.splice(e.oldIndex, 1, oldItem)
         },
         onMove: (e) => {
