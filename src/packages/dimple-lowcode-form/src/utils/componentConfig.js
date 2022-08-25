@@ -26,7 +26,7 @@ export default () => {
       validate: {
         name: '数据校验配置',
         disabled: false,
-        requiredValidateMsg: '',
+        requiredValidateMsg: '必填',
         min: null,
         minValidateMsg: '',
         max: null,

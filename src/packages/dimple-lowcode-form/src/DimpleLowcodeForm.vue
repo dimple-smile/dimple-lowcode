@@ -292,7 +292,7 @@ export default {
         for (const item of this.layout) {
           if (!item.config.validate.disabled) {
             if (item.formItemDefaultProps.required) {
-              if (!validate.required(item.value, item.valueType)) validateMsg = item.config.validate.requiredValidateMsg
+              if (!validate.required(item.value, item.valueType)) validateMsg = item.config.validate.requiredValidateMsg || '必填'
             }
             if (!validate.min(item.value, item.config.validate.min, item.valueType)) validateMsg = item.config.validate.minValidateMsg
             if (!validate.max(item.value, item.config.validate.max, item.valueType)) validateMsg = item.config.validate.maxValidateMsg

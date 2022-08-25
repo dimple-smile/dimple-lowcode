@@ -1,12 +1,12 @@
 <template>
   <div>
-    <FormItem v-if="!value.hideFiledName" label="字段名" type="input" v-model="value.filedName"></FormItem>
+    <!-- <FormItem v-if="!value.hideFiledName" label="字段名">{{value.filedName}}</FormItem> -->
     <FormItem label="数据类型" v-model="value.valueType" type="select" :options="valueTypeOptions"> </FormItem>
     <FormItem label="必填" v-model="value.formItemDefaultProps.required" type="switch"> </FormItem>
     <FormItem label="必填校验提示" v-model="value.config.validate.requiredValidateMsg" type="input"> </FormItem>
-    <FormItem label="min" v-model="value.config.validate.min" type="number" :min="0" tip="最小长度或最小值"> </FormItem>
+    <FormItem label="min" v-model="value.config.validate.min" type="number" tip="最小长度或最小值"> </FormItem>
     <FormItem label="min校验提示" v-model="value.config.validate.minValidateMsg" type="input"> </FormItem>
-    <FormItem label="max" v-model="value.config.validate.max" type="number" :min="0" tip="最大长度或最大值"> </FormItem>
+    <FormItem label="max" v-model="value.config.validate.max" type="number" tip="最大长度或最大值"> </FormItem>
     <FormItem label="max校验提示" v-model="value.config.validate.maxValidateMsg" type="input"> </FormItem>
 
     <FormItem label="校验规则">

@@ -14,7 +14,7 @@
         v-model="innerValue"
         v-bind="$attrs"
         :type="inputType"
-        :placeholder="placeholder"
+        :placeholder="placeholder || '请输入'"
         :size="computedSize"
         :disabled="disabled"
         clearable
@@ -25,7 +25,7 @@
         v-if="type === types.number"
         v-model="innerValue"
         v-bind="$attrs"
-        :placeholder="placeholder"
+        :placeholder="placeholder || '请输入'"
         :size="computedSize"
         :disabled="disabled"
         clearable
@@ -37,7 +37,7 @@
         v-if="type === types.float"
         v-model="innerValue"
         v-bind="$attrs"
-        :placeholder="placeholder"
+        :placeholder="placeholder || '请输入'"
         :size="computedSize"
         :disabled="disabled"
         clearable
@@ -53,7 +53,7 @@
         :maxlength="$attrs.maxlength || 50"
         clearable
         v-bind="$attrs"
-        :placeholder="placeholder"
+        :placeholder="placeholder || '请输入'"
         :size="computedSize"
         :disabled="disabled"
         @change="change"
@@ -71,7 +71,7 @@
           class="select"
           popper-class="aiot-form-item-select"
           v-model="innerValue"
-          :placeholder="placeholder"
+          :placeholder="placeholder || '请选择'"
           @change="change"
           :size="computedSize"
           :disabled="disabled"
@@ -146,7 +146,7 @@
           style="width: 100%"
           type="daterange"
           :size="computedSize"
-          :placeholder="placeholder"
+          :placeholder="placeholder || '日期范围'"
           :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
           :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期'"
           :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期'"
@@ -163,7 +163,7 @@
           style="width: 100%"
           type="datetimerange"
           :size="computedSize"
-          :placeholder="placeholder"
+          :placeholder="placeholder || '日期时间范围'"
           :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
           :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期时间'"
           :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期时间'"
@@ -186,7 +186,7 @@
           v-on="$listeners"
           :size="computedSize"
           :fetch-suggestions="querySearch"
-          :placeholder="placeholder"
+          :placeholder="placeholder || '请输入'"
           clearable
           @select="autocompleteChange"
         >
