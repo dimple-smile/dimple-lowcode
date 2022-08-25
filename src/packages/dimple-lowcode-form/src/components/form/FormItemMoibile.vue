@@ -6,44 +6,44 @@
 <template>
   <div class="dimple-lowcode-form-item-mobile">
     <template v-if="type === types.input">
-      <van-field clickable v-model="innerValue" :placeholder="placeholder || '请输入'" />
+      <van-field clickable v-model="innerValue" :placeholder="placeholder || '请输入'" clearable @input="change" />
     </template>
     <template v-if="type === types.number">
-      <van-field clickable v-model="innerValue" type="digit" :placeholder="placeholder || '请输入整数'" />
+      <van-field clickable v-model="innerValue" type="digit" :placeholder="placeholder || '请输入整数'" clearable @input="change" />
     </template>
     <template v-if="type === types.float">
-      <van-field clickable v-model="innerValue" type="number" :placeholder="placeholder || '请输入数字'" />
+      <van-field clickable v-model="innerValue" type="number" :placeholder="placeholder || '请输入数字'" clearable @input="change" />
     </template>
     <template v-if="type === types.tel">
-      <van-field clickable v-model="innerValue" type="tel" :placeholder="placeholder || '请输入手机号'" />
+      <van-field clickable v-model="innerValue" type="tel" :placeholder="placeholder || '请输入手机号'" clearable @input="change" />
     </template>
     <template v-if="type === types.textarea">
-      <van-field clickable v-model="innerValue" type="textarea" :rows="rows" autosize :placeholder="placeholder || '请输入'" />
+      <van-field clickable v-model="innerValue" type="textarea" :rows="rows" autosize :placeholder="placeholder || '请输入'" clearable @input="change" />
     </template>
     <template v-if="type === types.switch">
-      <van-field clickable>
+      <van-field>
         <template #input>
-          <van-switch v-model="innerValue" size="20" :active-color="primary" inactive-color="#dcdee0" v-bind="$attrs" />
+          <van-switch v-model="innerValue" size="20" :active-color="primary" inactive-color="#dcdee0" v-bind="$attrs" @change="change" />
         </template>
       </van-field>
     </template>
     <template v-if="type === types.radio">
-      <van-field clickable>
+      <van-field>
         <template #input>
-          <van-radio-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs">
+          <van-radio-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-radio :name="item.value">{{ item.label }}</van-radio>
+              <van-radio :name="item[optionsValueKey]">{{ item[optionsLabelKey] }}</van-radio>
             </template>
           </van-radio-group>
         </template>
       </van-field>
     </template>
     <template v-if="type === types['checkbox-group']">
-      <van-field clickable>
+      <van-field>
         <template #input>
-          <van-checkbox-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs">
+          <van-checkbox-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-checkbox :name="item.value" shape="square">{{ item.label }}</van-checkbox>
+              <van-checkbox :name="item[optionsValueKey]" shape="square">{{ item[optionsLabelKey] }}</van-checkbox>
             </template>
           </van-checkbox-group>
         </template>
