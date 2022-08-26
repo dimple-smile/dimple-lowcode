@@ -41,7 +41,7 @@
           </template>
 
           <template v-if="item.operateType === 'link'">
-            <FormItem label="跳转链接地址" type="input" v-model="item.url" placeholder="请输入链接地址" margin-bottom="0"></FormItem>
+            <FormItem label="跳转链接地址" type="input" v-model="item.link" placeholder="请输入链接地址" margin-bottom="0"></FormItem>
           </template>
         </Form>
       </el-collapse-item>

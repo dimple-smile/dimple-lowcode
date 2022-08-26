@@ -175,10 +175,10 @@
         >
         </el-date-picker>
       </template>
-      <slot v-else-if="type === types['text']">
+      <template v-else-if="type === types['text']">
         {{ value }}
-      </slot>
-      <slot v-else-if="type === types['autocomplete']">
+      </template>
+      <template v-else-if="type === types['autocomplete']">
         <el-autocomplete
           style="width: 100%"
           v-model="innerValue"
@@ -194,7 +194,7 @@
             <span>{{ item[optionsLabelKey] }}</span>
           </template>
         </el-autocomplete>
-      </slot>
+      </template>
       <template v-if="type.indexOf('mobile-') > -1">
         <FormItemMoibile
           v-model="innerValue"

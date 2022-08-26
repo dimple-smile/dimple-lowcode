@@ -165,7 +165,7 @@ export default {
       return this.innerPreview
     },
     innerMaterials() {
-      return [...this.systemMaterials, this.materials]
+      return [...this.systemMaterials, ...this.materials]
     },
   },
   watch: {
@@ -280,7 +280,7 @@ export default {
         isLink = operateType === 'link'
         isRequest = operateType === 'request'
         body.id = this.formConfig.id
-        if (isLink && !is.http(api)) return Message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+        if (isLink && !is.http(link)) return Message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
         if (isRequest && !is.http(api)) return Message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作')
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value

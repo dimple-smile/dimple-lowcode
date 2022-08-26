@@ -28,22 +28,22 @@
       </van-field>
     </template>
     <template v-if="type === types.radio">
-      <van-field>
+      <van-field style="padding-top: 5px">
         <template #input>
-          <van-radio-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs" @change="change">
+          <van-radio-group v-model="innerValue" :checked-color="primary" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-radio :name="item[optionsValueKey]">{{ item[optionsLabelKey] }}</van-radio>
+              <van-radio :name="item[optionsValueKey]" style="margin-bottom: 10px">{{ item[optionsLabelKey] }}</van-radio>
             </template>
           </van-radio-group>
         </template>
       </van-field>
     </template>
     <template v-if="type === types['checkbox-group']">
-      <van-field>
+      <van-field style="padding-top: 5px">
         <template #input>
-          <van-checkbox-group v-model="innerValue" :checked-color="primary" :direction="direction" v-bind="$attrs" @change="change">
+          <van-checkbox-group v-model="innerValue" :checked-color="primary" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-checkbox :name="item[optionsValueKey]" shape="square">{{ item[optionsLabelKey] }}</van-checkbox>
+              <van-checkbox :name="item[optionsValueKey]" shape="square" style="margin-bottom: 10px">{{ item[optionsLabelKey] }}</van-checkbox>
             </template>
           </van-checkbox-group>
         </template>
@@ -73,8 +73,16 @@
     </template>
 
     <template v-if="type === types['date']">
+
       <van-field readonly clickable :border="false" :value="dateFormat(innerValue)" :placeholder="placeholder || '点击选择日期'" @click="showPicker = true" />
-      <van-calendar v-model="showPicker" :color="primary" :default-date="new Date(dayjs(innerValue))" @confirm="onDateChange" @cancel="showPicker = false" />
+      <van-calendar
+        v-model="showPicker"
+        :color="primary"
+        :default-date="innerValue ? new Date(dayjs(innerValue)) : new Date()"
+        :minDate="new Date(2010, 0, 1)"
+        @confirm="onDateChange"
+        @cancel="showPicker = false"
+      />
     </template>
 
     <template v-if="type === types['datetime']">
@@ -95,6 +103,10 @@
         <van-datetime-picker v-model="currentDateTimeRangeStart" title="开始日期时间" :color="primary" type="datetime" @confirm="onDateTimeRangeChange" @cancel="showPicker = false" />
         <van-datetime-picker v-model="currentDateTimeRangeEnd" title="结束日期时间" :color="primary" type="datetime" confirm-button-text="_" cancel-button-text="_" />
       </van-popup>
+    </template>
+
+    <template v-else-if="type === types['text']">
+      {{ value }}
     </template>
   </div>
 </template>
