@@ -188,7 +188,7 @@ export default {
     },
     formConfig: {
       handler: function (value) {
-        if (isEqual(value, this.formConfig)) return
+        if (isEqual(value, this.config)) return
         this.$emit('update:config', value)
       },
       deep: true,
