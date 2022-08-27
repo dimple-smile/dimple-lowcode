@@ -17,8 +17,8 @@ const getUrlParms = (url, mode = 'history') => {
 
 const mergeUrl = (url, appendUrl) => {
   if (!url) return {}
-  const historyParams = { ...getUrlParms(url), ...getUrlParms(appendUrl) }
-  const hashParams = { ...getUrlParms(url, 'hash'), ...getUrlParms(appendUrl, 'hash') }
+  const historyParams = { ...getUrlParms(appendUrl), ...getUrlParms(url) }
+  const hashParams = { ...getUrlParms(appendUrl, 'hash'), ...getUrlParms(url, 'hash') }
   const historyParamsStr = Object.keys(historyParams)
     .map((key) => `${key}=${historyParams[key]}`)
     .join('&')
@@ -26,7 +26,7 @@ const mergeUrl = (url, appendUrl) => {
     .map((key) => `${key}=${hashParams[key]}`)
     .join('&')
   const historyBaseUrl = url.split('#')[0].split('?')[0]
-  const hashBaseUrl = url.replace(historyBaseUrl,'').split('?')[0]
+  const hashBaseUrl = url.replace(historyBaseUrl, '').split('?')[0]
   let res = `${historyBaseUrl}`
   if (historyParamsStr) res += `?${historyParamsStr}`
   if (hashBaseUrl) res += `${hashBaseUrl}`
