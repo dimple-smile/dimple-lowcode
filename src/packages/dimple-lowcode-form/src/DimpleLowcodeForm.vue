@@ -118,6 +118,8 @@ import { formConfig } from './utils/formConfig'
 import { getQueryByKey } from './utils/getQueryByKey'
 import { is } from './utils/is'
 import { validate } from './utils/validate'
+import { mergeUrl } from './utils/url'
+
 import axios from 'axios'
 import merge from 'lodash/merge'
 import isEqual from 'lodash/isEqual'
@@ -179,7 +181,7 @@ export default {
     config: {
       handler: function (value) {
         if (isEqual(value, this.formConfig)) return
-        this.formConfig = merge(cloneDeep(this.formConfig), value)
+        this.$set(this, 'formConfig', merge(cloneDeep(this.formConfig), value))
       },
       deep: true,
       immediate: true,
@@ -242,6 +244,7 @@ export default {
       let req = { url: api, method: 'post', headers, data: body }
       try {
         if (this.saveRequestConfig) req = await this.saveRequestConfig(req)
+        if (typeof req !== 'object') return loadingInstance.close()
       } catch (error) {
         console.error('自定义保存配置填写错误', error)
         return Message.error('保存配置填写错误')
@@ -259,6 +262,7 @@ export default {
           loadingInstance.close()
         })
     },
+
     async btnHandle(config) {
       if (!this.isPreview) return
       let operateType = ''
@@ -333,7 +337,10 @@ export default {
         console.error('按钮配置填写错误', error)
         return Message.error('按钮配置填写错误')
       }
-      if (isLink) return (window.location.href = link)
+      if (isLink) {
+        window.location.href = mergeUrl(link, window.location.href)
+        return
+      }
 
       if (isRequest) {
         const loadingInstance = Loading.service({ fullscreen: true })
@@ -341,6 +348,7 @@ export default {
         let req = { url: api, method: 'post', headers, data: body }
         try {
           if (this.btnRequestConfig) req = await this.btnRequestConfig(req, config)
+          if (typeof req !== 'object') return loadingInstance.close()
         } catch (error) {
           console.error('自定义按钮配置填写错误', error)
           return Message.error('自定义按钮配置填写错误')
