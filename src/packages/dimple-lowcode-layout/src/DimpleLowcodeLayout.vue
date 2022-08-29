@@ -23,27 +23,29 @@
           :style="containerStyle"
           @mousemove.capture="handleComponentItemMouseMove"
           @mouseleave="currentRenderKey = null"
+          @click="renderContainerClick"
         >
           <slot name="render-header"></slot>
           <div
             v-for="(item, index) in value"
             :class="{ 'render-item': !preview }"
-            :style="getRenderItemStyle(item)"
             :key="item[componentKey] + item[renderKey]"
             :data-render-key="item[renderKey]"
             :data-component-key="item[componentKey]"
           >
-            <slot name="render-item" :data="item"> </slot>
-            <div
-              class="render-item-mask"
-              v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
-              @click.stop="handleComponentClick($event, item)"
-            >
-              <slot name="render-item-mask">
-                <div class="render-item-mask-default">
-                  <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
-                </div>
-              </slot>
+            <div style="position: relative" :style="getRenderItemStyle(item)">
+              <slot name="render-item" :data="item"> </slot>
+              <div
+                class="render-item-mask"
+                v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
+                @click.stop="handleComponentClick($event, item)"
+              >
+                <slot name="render-item-mask" :data="item" :index="index">
+                  <div class="render-item-mask-default">
+                    <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
+                  </div>
+                </slot>
+              </div>
             </div>
           </div>
           <slot name="render-footer"></slot>
@@ -81,7 +83,6 @@ export default {
     componentItemClass: {},
     componentKey: { type: String, default: 'key' },
     renderKey: { type: String, default: 'id' },
-    ghostStyle: { type: Object, default: () => ({}) },
     columnWidth: { type: String, default: null },
     dragDataAdapter: { type: Function, default: null },
   },
@@ -90,6 +91,7 @@ export default {
       dragComponentItemClassName: 'component-item',
       dragRenderItemClassName: 'render-item',
       ghostClass: 'ghost',
+      ghostStyle: {},
       dragData: {},
       currentRenderKey: null,
       materialsSortable: null,
@@ -138,11 +140,13 @@ export default {
     handleComponentItemMouseMove(e) {
       const rootEl = this.$refs['render-container']
       let renderKey = null
+      let componentKey = null
       const check = (target) => {
         if (!target) return
         if (target === rootEl) return
         if (target.dataset.renderKey) {
           renderKey = target.dataset.renderKey
+          componentKey = target.dataset.componentKey
           return
         }
         if (!target.parentNode) return
@@ -150,6 +154,7 @@ export default {
       }
       check(e.target)
       this.currentRenderKey = renderKey
+      this.$emit('onComponentItemMouseMove', { renderKey, componentKey })
     },
     init() {
       if (this.materialsSortable) this.materialsSortable.destroy()
@@ -171,6 +176,8 @@ export default {
           item[this.renderKey] = uniqueId(`${+new Date()}_`)
           if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
+          const itemStyle = this.getRenderItemStyle(item)
+          this.ghostStyle = itemStyle
         },
         onMove: (e) => {
           e.dragged.classList.add('ghost')
@@ -182,6 +189,11 @@ export default {
         draggable: '.' + this.dragRenderItemClassName,
         ghostClass: 'ghost',
         animation: 150,
+        onStart: (e) => {
+          const renderItem = this.value.find((item) => item[this.renderKey] === e.item.dataset.renderKey)
+          const itemStyle = this.getRenderItemStyle(renderItem)
+          this.ghostStyle = itemStyle
+        },
         onAdd: (e) => {
           if (!this.dragData) return
           e.item.remove()
@@ -201,6 +213,9 @@ export default {
     handleComponentClick(e, item) {
       if (item[this.renderKey] === this.currentComponent?.[this.renderKey]) return this.$emit('update:currentComponent', null)
       this.$emit('update:currentComponent', item)
+    },
+    renderContainerClick() {
+      if (!this.currentRenderKey) this.$emit('update:currentComponent', null)
     },
   },
   mounted() {
@@ -288,13 +303,26 @@ export default {
 
 <style>
 .dimple-lowcode-layout .render-container .ghost {
+  position: relative;
   height: var(--dimple-lowcode-layout-ghost-height) !important;
   width: var(--dimple-lowcode-layout-ghost-width) !important;
-  /* width: 100% !important; */
   background: var(--dimple-lowcode-layout-ghost-background) !important;
   opacity: var(--dimple-lowcode-layout-ghost-opacity) !important;
   padding: 0 !important;
   margin: 0 !important;
   height: auto !important;
+}
+
+.dimple-lowcode-layout .render-container .ghost::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  content: '';
+  background: var(--dimple-lowcode-layout-ghost-background) !important;
+  box-sizing: border-box;
+  border: 1px dashed rgba(21, 59, 184, 0.3);
 }
 </style>
