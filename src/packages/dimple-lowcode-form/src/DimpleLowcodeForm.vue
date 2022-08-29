@@ -13,11 +13,14 @@
         component-item-class="dimple-lowcode-form-component-item-cotainer"
         :column-width="formConfig.columnWidth"
         :dragDataAdapter="dragDataAdapter"
+        v-bind="$attrs"
+        v-on="$listeners"
       >
         <template #header>
-          <Form class="header" margin-bottom="0">
+          <slot name="header"></slot>
+          <Form v-if="!$slots.header" class="header" margin-bottom="0">
             <slot name="logo">
-              <div class="title">DIMPLE表单设计器</div>
+              <div class="logo">DIMPLE表单设计器</div>
             </slot>
             <slot name="header-content">
               <div class="header-content">
@@ -37,7 +40,7 @@
               </div>
             </slot>
             <slot name="header-append">
-              <el-button size="mini" @click="drawer = true">表单配置</el-button>
+              <el-button class="header-append" size="mini" @click="drawer = true">表单配置</el-button>
             </slot>
           </Form>
         </template>
@@ -69,7 +72,11 @@
         </template>
 
         <template #render-item="{ data }">
-          <Render :value="data" :materials="innerMaterials" />
+          <Render :type="renderType" :value="data" :materials="innerMaterials" />
+        </template>
+
+        <template #render-item-mask="{ data, index }">
+          <slot name="render-item-mask" :data="data" :index="index"></slot>
         </template>
 
         <template #render-footer>
@@ -89,10 +96,12 @@
         </template>
 
         <template #footer>
-          <div class="footer">
-            <el-button type="primary" size="mini" :type="formConfig.save.btnType" @click="save">{{ formConfig.save.text }}</el-button>
-            <el-button size="mini" @click="toPreview">预览</el-button>
-          </div>
+          <slot name="footer">
+            <div class="footer">
+              <el-button type="primary" size="mini" :type="formConfig.save.btnType" @click="save">{{ formConfig.save.text }}</el-button>
+              <el-button size="mini" @click="toPreview">预览</el-button>
+            </div>
+          </slot>
         </template>
       </DimpleLowcodeLayout>
     </Form>
@@ -142,6 +151,7 @@ export default {
     FormItem,
   },
   props: {
+    value: { type: Array, default: () => [] },
     systemMaterials: { type: Array, default: () => systemMaterials() },
     materials: { type: Array, default: () => [] },
     config: { type: Object, default: () => {} },
@@ -149,6 +159,7 @@ export default {
     preview: { type: Boolean, default: null },
     saveRequestConfig: { type: Function, default: null },
     btnRequestConfig: { type: Function, default: null },
+    renderType: { type: String, default: 'form-item' },
   },
   data() {
     return {
@@ -174,6 +185,22 @@ export default {
     data: {
       handler: function (value) {
         this.setLayout(value)
+      },
+      deep: true,
+      immediate: true,
+    },
+    value: {
+      handler: function (value) {
+        if (isEqual(this.value, this.layout)) return
+        this.setLayout(value)
+      },
+      deep: true,
+      immediate: true,
+    },
+    layout: {
+      handler: function (value) {
+        if (isEqual(this.value, this.layout)) return
+        this.$emit('input', value)
       },
       deep: true,
       immediate: true,
@@ -393,29 +420,36 @@ export default {
 }
 
 .header {
-  height: 69px;
   background: #fff;
-  padding: 0 18px;
   border: 1px solid #dddddd;
   border-top: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-content: center;
 }
 
-.header .title {
+.header .logo {
   font-weight: 500;
+  padding-left: 18px;
   margin-right: 20px;
 }
 
 .header-content {
+  height: 69px;
   flex: 1;
   display: flex;
   justify-content: flex-start;
+  align-items: center;
 }
 
 .header-content-item {
   width: 220px;
+}
+
+.header-append {
+  margin-left: 18px;
+  margin-right: 18px;
 }
 
 .footer {
