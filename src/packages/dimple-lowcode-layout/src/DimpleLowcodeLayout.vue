@@ -28,24 +28,26 @@
           <slot name="render-header"></slot>
           <div
             v-for="(item, index) in value"
-            :class="{ 'render-item': !preview }"
+            class="render-item-container"
+            :class="{ 'render-item-handle': !preview }"
             :key="item[componentKey] + item[renderKey]"
             :data-render-key="item[renderKey]"
             :data-component-key="item[componentKey]"
+            :style="getRenderItemContainerStyle(item)"
           >
-            <div style="position: relative" :style="getRenderItemStyle(item)">
+            <div :style="getRenderItemStyle(item)">
               <slot name="render-item" :data="item"> </slot>
-              <div
-                class="render-item-mask"
-                v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
-                @click.stop="handleComponentClick($event, item)"
-              >
-                <slot name="render-item-mask" :data="item" :index="index">
-                  <div class="render-item-mask-default">
-                    <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
-                  </div>
-                </slot>
-              </div>
+            </div>
+            <div
+              class="render-item-mask"
+              v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
+              @click.stop="handleComponentClick($event, item)"
+            >
+              <slot name="render-item-mask" :data="item" :index="index">
+                <div class="render-item-mask-default">
+                  <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
+                </div>
+              </slot>
             </div>
           </div>
           <slot name="render-footer"></slot>
@@ -89,7 +91,7 @@ export default {
   data() {
     return {
       dragComponentItemClassName: 'component-item',
-      dragRenderItemClassName: 'render-item',
+      dragRenderItemClassName: 'render-item-handle',
       ghostClass: 'ghost',
       ghostStyle: {},
       dragData: {},
@@ -132,21 +134,28 @@ export default {
     },
   },
   methods: {
-    getRenderItemStyle(item) {
+    getRenderItemContainerStyle(item) {
       const itemStyle = JSON.parse(JSON.stringify((item && item.style) || {}))
       if (!itemStyle.width) itemStyle.width = this.columnWidth || '100%'
+      return itemStyle
+    },
+    getRenderItemStyle(item) {
+      const itemStyle = JSON.parse(JSON.stringify((item && item.style) || {}))
+      itemStyle.width = '100%'
       return itemStyle
     },
     handleComponentItemMouseMove(e) {
       const rootEl = this.$refs['render-container']
       let renderKey = null
       let componentKey = null
+      let currentTarget = null
       const check = (target) => {
         if (!target) return
         if (target === rootEl) return
         if (target.dataset.renderKey) {
           renderKey = target.dataset.renderKey
           componentKey = target.dataset.componentKey
+          currentTarget = target
           return
         }
         if (!target.parentNode) return
@@ -154,6 +163,13 @@ export default {
       }
       check(e.target)
       this.currentRenderKey = renderKey
+      if (currentTarget) {
+        this.$set(this, 'ghostStyle', {
+          height: currentTarget.clientHeight + 'px',
+          width: currentTarget.clientWidth + 'px',
+        })
+      }
+
       this.$emit('onComponentItemMouseMove', { renderKey, componentKey })
     },
     init() {
@@ -176,8 +192,8 @@ export default {
           item[this.renderKey] = uniqueId(`${+new Date()}_`)
           if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
-          const itemStyle = this.getRenderItemStyle(item)
-          this.ghostStyle = itemStyle
+          const containerItemStyle = this.getRenderItemContainerStyle(item)
+          this.ghostStyle = containerItemStyle
         },
         onMove: (e) => {
           e.dragged.classList.add('ghost')
@@ -189,11 +205,6 @@ export default {
         draggable: '.' + this.dragRenderItemClassName,
         ghostClass: 'ghost',
         animation: 150,
-        onStart: (e) => {
-          const renderItem = this.value.find((item) => item[this.renderKey] === e.item.dataset.renderKey)
-          const itemStyle = this.getRenderItemStyle(renderItem)
-          this.ghostStyle = itemStyle
-        },
         onAdd: (e) => {
           if (!this.dragData) return
           e.item.remove()
@@ -270,9 +281,10 @@ export default {
   overflow: overlay;
 }
 
-.render-item {
+.render-item-container {
   overflow: overlay;
   position: relative;
+  height: auto;
 }
 
 .render-item-mask {
@@ -282,7 +294,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 999;
+  z-index: 998;
   cursor: move;
   background: rgba(21, 59, 184, 0.05);
   box-sizing: border-box;
@@ -319,7 +331,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 999;
   content: '';
   background: var(--dimple-lowcode-layout-ghost-background) !important;
   box-sizing: border-box;
