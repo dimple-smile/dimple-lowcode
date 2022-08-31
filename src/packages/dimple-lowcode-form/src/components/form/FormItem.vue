@@ -8,7 +8,7 @@
         <span class="tip-icon el-icon-warning"></span>
       </el-tooltip>
     </div>
-    <div class="content" :class="[computedSize]" :style="{ width: computedContentWidth, flex: contentWidth === '100%' || form.contentWidth === '100%' ? '1' : '' }">
+    <div class="content" :class="[computedSize]" :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }">
       <el-input
         v-if="type === types.input"
         v-model="innerValue"
@@ -176,7 +176,9 @@
         </el-date-picker>
       </template>
       <template v-else-if="type === types['text']">
-        {{ value }}
+        <div style="width: 100%">
+          {{ value }}
+        </div>
       </template>
       <template v-else-if="type === types['autocomplete']">
         <el-autocomplete
@@ -496,6 +498,7 @@ export default {
 
 .content {
   position: relative;
+  word-wrap: break-word;
 }
 .select {
   width: 100%;
