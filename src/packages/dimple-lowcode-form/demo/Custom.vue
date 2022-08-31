@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100vh">
-    <DimpleLowcodeForm v-model="data" :systemMaterials="[]" :materials="materials" renderType="custom">
+    <DimpleLowcodeForm v-model="data" :columnWidth="''" :systemMaterials="[]" :materials="materials" renderType="custom">
       <template #header><div></div> </template>
       <template #panel><div></div> </template>
       <template #render-item-mask="{ data, index }">
@@ -35,6 +35,7 @@ export default {
               key: 'test',
               defaultProps: { size: 'small' },
               component: Test,
+              style: { width: '200px', height: '200px' },
             },
           ],
         },
