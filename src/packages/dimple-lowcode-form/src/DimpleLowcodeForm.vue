@@ -238,6 +238,7 @@ export default {
     },
     toPreview() {
       this.innerPreview = true
+      this.$emit('update:preview', true)
       Message.success('按下ESC键可以退出预览')
     },
     async save() {
@@ -403,6 +404,7 @@ export default {
       const isEsc = e.keyCode === 27
       if (!isEsc) return
       this.innerPreview = false
+      this.$emit('update:preview', false)
     }
     document.addEventListener('keydown', this.escHandle, false)
   },
