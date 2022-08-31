@@ -82,7 +82,7 @@
         <template #render-footer>
           <FormItem v-if="layout.length">
             <template v-for="item in formConfig.buttons">
-              <el-button :type="item.btnType" size="mini" @click="btnHandle(item)">{{ item.text }}</el-button>
+              <el-button :type="item.btnType" size="mini" @click="onOprateClick(item)">{{ item.text }}</el-button>
             </template>
           </FormItem>
         </template>
@@ -159,6 +159,8 @@ export default {
     preview: { type: Boolean, default: null },
     saveRequestConfig: { type: Function, default: null },
     btnRequestConfig: { type: Function, default: null },
+    saveHandler: { type: Function, default: null },
+    btnHandler: { type: Function, default: null },
     renderType: { type: String, default: 'form-item' },
   },
   data() {
@@ -238,9 +240,11 @@ export default {
     },
     toPreview() {
       this.innerPreview = true
+      this.$emit('update:preview', true)
       Message.success('按下ESC键可以退出预览')
     },
     async save() {
+      if (this.saveHandler) return this.saveHandler({ layout: this.layout, config: this.formConfig })
       let api = ''
       const headers = {}
       const body = {}
@@ -290,8 +294,9 @@ export default {
         })
     },
 
-    async btnHandle(config) {
+    async onOprateClick(config) {
       if (!this.isPreview) return
+      if (this.btnHandler) return this.btnHandler({ layout: this.layout, config: this.formConfig, btnConfig: config })
       let operateType = ''
       let api = ''
       const headers = {}
@@ -311,7 +316,11 @@ export default {
         isLink = operateType === 'link'
         isRequest = operateType === 'request'
         body.id = this.formConfig.id
-        if (isLink && !is.http(link)) return Message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+        if (isLink) {
+          if (!is.http(link)) return Message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+          window.location.href = mergeUrl(link, window.location.href)
+          return
+        }
         if (isRequest && !is.http(api)) return Message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作')
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
@@ -364,10 +373,6 @@ export default {
         console.error('按钮配置填写错误', error)
         return Message.error('按钮配置填写错误')
       }
-      if (isLink) {
-        window.location.href = mergeUrl(link, window.location.href)
-        return
-      }
 
       if (isRequest) {
         const loadingInstance = Loading.service({ fullscreen: true })
@@ -403,6 +408,7 @@ export default {
       const isEsc = e.keyCode === 27
       if (!isEsc) return
       this.innerPreview = false
+      this.$emit('update:preview', false)
     }
     document.addEventListener('keydown', this.escHandle, false)
   },

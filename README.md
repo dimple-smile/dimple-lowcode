@@ -73,13 +73,18 @@ export default {
 [(Back to top)](#目录)
 | 参数名 | <img width="180px" /> 意义 <img width="180px" /> | 类型 | <img width="120px" /> 默认值 <img width="120px" /> | 说明 |
 | -| -| -| - | - |
+| value | 渲染的表单数据 | Array | [] | 用于预置渲染或者预览渲染表单页面，支持v-model |
 | systemMaterials | 系统素材列表 | Array | systemMaterials() | 系统库素材库，import { systemMaterials } from '@dimple-smile/dimple-lowcode' 可以拿到 |
 | materials | 素材列表 | Array | [] | 会添加于系统库之后 |
 | config | 配置项 | Object | {} | 可以填一些初始的表单配置，支持sync双向绑定 |
-| data | 渲染的表单数据 | Array | [] | 用于预置渲染或者预览渲染表单页面 |
-| preview | 是否为预览模式 | Boolean | null | 是否为预览模式 |
+| preview | 是否为预览模式 | Boolean | null | 是否为预览模式，支持sync双向绑定 |
 | saveRequestConfig | 保存时的自定义配置 | Function | null | 此配置为一个函数，会带上当前框架已经校验完成的axios请求配置 |
 | btnRequestConfig | 按钮提交时的自定义配置 | Function | null | 此配置为一个函数，会带上当前框架已经校验完成的axios请求配置 |
+| saveHandler | 自定义保存操作 | Function | null | 配置后请求按钮会替换为此Handler，参数：{ layout,config } |
+| btnHandler | 自定义按钮操作 | Function | null | 配置后按钮操作事件会替换为此Handler，参数：{ layout,config,btnConfig } |
+| renderType | 渲染类型 | string | form-item | 每个渲染item的渲染类型，默认为表单项，填入custom可以为一个纯粹的容器 |
+| gutter | 布局子项之间的间距 | string | null | 单位为px或者vw、vh |
+| gutterPlacement | gutter的位置 | string | right | 支持['top', 'bottom', 'left', 'right']四选一 |
 
 ```
 // materials 配置示例

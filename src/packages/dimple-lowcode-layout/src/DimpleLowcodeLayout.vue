@@ -25,7 +25,6 @@
           @mouseleave="currentRenderKey = null"
           @click="renderContainerClick"
         >
-          <slot name="render-header"></slot>
           <div
             v-for="(item, index) in value"
             class="render-item-container"
@@ -35,12 +34,14 @@
             :data-component-key="item[componentKey]"
             :style="getRenderItemContainerStyle(item)"
           >
+            <div v-if="['top', 'left'].includes(gutterPlacement)" :style="{ width: gutter, height: gutter }"></div>
             <div :style="getRenderItemStyle(item)">
               <slot name="render-item" :data="item"> </slot>
             </div>
+            <div v-if="['bottom', 'right'].includes(gutterPlacement)" :style="{ width: gutter, height: gutter }"></div>
             <div
-              class="render-item-mask"
               v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
+              class="render-item-mask"
               @click.stop="handleComponentClick($event, item)"
             >
               <slot name="render-item-mask" :data="item" :index="index">
@@ -50,7 +51,6 @@
               </slot>
             </div>
           </div>
-          <slot name="render-footer"></slot>
         </div>
       </div>
       <div v-show="!preview">
@@ -87,6 +87,8 @@ export default {
     renderKey: { type: String, default: 'id' },
     columnWidth: { type: String, default: null },
     dragDataAdapter: { type: Function, default: null },
+    gutter: { type: String, default: '' },
+    gutterPlacement: { type: String, default: 'right', options: ['top', 'bottom', 'left', 'right'] },
   },
   data() {
     return {
@@ -135,13 +137,16 @@ export default {
   },
   methods: {
     getRenderItemContainerStyle(item) {
-      const itemStyle = JSON.parse(JSON.stringify((item && item.style) || {}))
+      const itemStyle = cloneDeep(item.style || {})
       if (!itemStyle.width) itemStyle.width = this.columnWidth || '100%'
       return itemStyle
     },
     getRenderItemStyle(item) {
-      const itemStyle = JSON.parse(JSON.stringify((item && item.style) || {}))
-      itemStyle.width = '100%'
+      const itemStyle = cloneDeep(item.style || {})
+      if (!itemStyle.width) {
+        if (['bottom', 'top'].includes(this.gutterPlacement)) itemStyle.width = '100%'
+        if (['right', 'left'].includes(this.gutterPlacement)) itemStyle.flex = '1'
+      }
       return itemStyle
     },
     handleComponentItemMouseMove(e) {
@@ -192,8 +197,8 @@ export default {
           item[this.renderKey] = uniqueId(`${+new Date()}_`)
           if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
-          const containerItemStyle = this.getRenderItemContainerStyle(item)
-          this.ghostStyle = containerItemStyle
+          const itemStyle = item.style || {}
+          this.$set(this.ghostStyle, 'width', itemStyle.width || this.columnWidth || '100%')
         },
         onMove: (e) => {
           e.dragged.classList.add('ghost')
@@ -285,6 +290,8 @@ export default {
   overflow: overlay;
   position: relative;
   height: auto;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .render-item-mask {
