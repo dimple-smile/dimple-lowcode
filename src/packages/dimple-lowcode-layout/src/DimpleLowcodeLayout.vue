@@ -137,9 +137,8 @@ export default {
   },
   methods: {
     getRenderItemContainerStyle(item) {
-      const itemStyle = cloneDeep(item.style || {})
-      if (!itemStyle.width) itemStyle.width = this.columnWidth || '100%'
-      return itemStyle
+      if (this.columnWidth) return { width: this.columnWidth }
+      return {}
     },
     getRenderItemStyle(item) {
       const itemStyle = cloneDeep(item.style || {})
