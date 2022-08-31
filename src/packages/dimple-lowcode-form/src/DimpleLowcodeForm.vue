@@ -1,6 +1,6 @@
 <template>
   <div class="dimple-lowcode-form-conatiner">
-    <Form v-bind="formConfig.formProps" style="height: 100%">
+    <Form v-bind="formConfig.formProps" style="height: 100%; width: 100%">
       <DimpleLowcodeLayout
         ref="dimpleLayout"
         v-model="layout"
@@ -11,7 +11,7 @@
         :container-style="formConfig.style"
         component-list-class="dimple-lowcode-form-component-list"
         component-item-class="dimple-lowcode-form-component-item-cotainer"
-        :column-width="formConfig.columnWidth"
+        :column-width="$attrs.columnWidth !== undefined ? $attrs.columnWidth : formConfig.columnWidth"
         :dragDataAdapter="dragDataAdapter"
         v-bind="$attrs"
         v-on="$listeners"
