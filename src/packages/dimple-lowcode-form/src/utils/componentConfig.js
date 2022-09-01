@@ -9,6 +9,7 @@ export default () => {
     component: '',
     valueType: valueTypes.string.value,
     value: '',
+    containerStyle: {},
     style: {},
     props: {},
     defaultProps: {},

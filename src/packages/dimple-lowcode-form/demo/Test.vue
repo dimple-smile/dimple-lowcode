@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 20px;">
+  <div style="padding: 20px;width: 1000px;">
     {{ size }}
   </div>
 </template>

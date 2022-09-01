@@ -35,21 +35,22 @@
             :style="getRenderItemContainerStyle(item)"
           >
             <div v-if="['top', 'left'].includes(gutterPlacement)" :style="{ width: gutter, height: gutter }"></div>
-            <div :style="getRenderItemStyle(item)">
-              <slot name="render-item" :data="item"> </slot>
+            <div style="position: relative; overflow: hidden" :style="getRenderItemStyle(item)">
+              <slot name="render-item" :data="item" :index="index"> </slot>
+              <slot name="render-item-custom" :data="item" :index="index"></slot>
+              <div
+                v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
+                class="render-item-mask"
+                @click.stop="handleComponentClick($event, item)"
+              >
+                <slot name="render-item-mask" :data="item" :index="index">
+                  <div class="render-item-mask-default">
+                    <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
+                  </div>
+                </slot>
+              </div>
             </div>
             <div v-if="['bottom', 'right'].includes(gutterPlacement)" :style="{ width: gutter, height: gutter }"></div>
-            <div
-              v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
-              class="render-item-mask"
-              @click.stop="handleComponentClick($event, item)"
-            >
-              <slot name="render-item-mask" :data="item" :index="index">
-                <div class="render-item-mask-default">
-                  <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
-                </div>
-              </slot>
-            </div>
           </div>
         </div>
       </div>
@@ -137,8 +138,9 @@ export default {
   },
   methods: {
     getRenderItemContainerStyle(item) {
-      if (this.columnWidth) return { width: this.columnWidth }
-      return {}
+      const itemContainerStyle = cloneDeep(item.containerStyle || {})
+      if (this.columnWidth && !itemContainerStyle.width) itemContainerStyle.width = this.columnWidth
+      return itemContainerStyle
     },
     getRenderItemStyle(item) {
       const itemStyle = cloneDeep(item.style || {})
@@ -168,12 +170,13 @@ export default {
       check(e.target)
       this.currentRenderKey = renderKey
       if (currentTarget) {
+        const item = this.componentList.find((item) => item[this.componentKey] === componentKey)
+        const itemContainerStyle = (item && item.containerStyle) || {}
         this.$set(this, 'ghostStyle', {
-          height: currentTarget.clientHeight + 'px',
-          width: currentTarget.clientWidth + 'px',
+          height: itemContainerStyle.height || currentTarget.clientHeight + 'px',
+          width: itemContainerStyle.width || this.columnWidth || currentTarget.clientWidth + 'px',
         })
       }
-
       this.$emit('onComponentItemMouseMove', { renderKey, componentKey })
     },
     init() {
@@ -196,8 +199,8 @@ export default {
           item[this.renderKey] = uniqueId(`${+new Date()}_`)
           if (this.dragDataAdapter) item = this.dragDataAdapter(item)
           this.dragData = item
-          const itemStyle = item.style || {}
-          this.$set(this.ghostStyle, 'width', itemStyle.width || this.columnWidth || '100%')
+          const itemContainerStyle = item.containerStyle || {}
+          this.$set(this.ghostStyle, 'width', itemContainerStyle.width || this.columnWidth || '100%')
         },
         onMove: (e) => {
           e.dragged.classList.add('ghost')

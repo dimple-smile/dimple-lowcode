@@ -74,6 +74,10 @@
         <template #render-item="{ data }">
           <Render :type="renderType" :value="data" :materials="innerMaterials" />
         </template>
+        
+        <template #render-item-custom="{ data, index }">
+          <slot name="render-item-custom" :data="data" :index="index"></slot>
+        </template>
 
         <template #render-item-mask="{ data, index }">
           <slot name="render-item-mask" :data="data" :index="index"></slot>
