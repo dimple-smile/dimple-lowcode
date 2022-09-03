@@ -38,11 +38,7 @@
             <div style="position: relative; overflow: hidden" :style="getRenderItemStyle(item)">
               <slot name="render-item" :data="item" :index="index"> </slot>
               <slot name="render-item-custom" :data="item" :index="index"></slot>
-              <div
-                v-if="!preview && (item[renderKey] === currentRenderKey || item[renderKey] === currentComponent?.[renderKey])"
-                class="render-item-mask"
-                @click.stop="handleComponentClick($event, item)"
-              >
+              <div v-if="showMask(item)" class="render-item-mask" @click.stop="handleComponentClick($event, item)">
                 <slot name="render-item-mask" :data="item" :index="index">
                   <div class="render-item-mask-default">
                     <i class="icon el-icon-delete" style="color: #dd3914" @click.stop="value.splice(index, 1)"></i>
@@ -229,11 +225,18 @@ export default {
       })
     },
     handleComponentClick(e, item) {
-      if (item[this.renderKey] === this.currentComponent?.[this.renderKey]) return this.$emit('update:currentComponent', null)
+      const currentComponent = this.currentComponent || {}
+      if (item[this.renderKey] === currentComponent[this.renderKey]) return this.$emit('update:currentComponent', null)
       this.$emit('update:currentComponent', item)
     },
     renderContainerClick() {
       if (!this.currentRenderKey) this.$emit('update:currentComponent', null)
+    },
+    showMask(item) {
+      if (this.preview || !item) return
+      const currentComponent = this.currentComponent || {}
+      const renderKey = this.renderKey
+      return item[renderKey] === this.currentRenderKey || item[renderKey] === currentComponent[renderKey]
     },
   },
   mounted() {
