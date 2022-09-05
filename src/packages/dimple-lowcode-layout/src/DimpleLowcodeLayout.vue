@@ -25,6 +25,7 @@
           @mouseleave="currentRenderKey = null"
           @click="renderContainerClick"
         >
+          <slot name="render-header"> </slot>
           <div
             v-for="(item, index) in value"
             class="render-item-container"
@@ -48,6 +49,7 @@
             </div>
             <div v-if="['bottom', 'right'].includes(gutterPlacement)" :style="{ width: gutter, height: gutter }"></div>
           </div>
+          <slot name="render-footer"> </slot>
         </div>
       </div>
       <div v-show="!preview">
@@ -278,9 +280,12 @@ export default {
   height: 100%;
   flex: 1;
   overflow: hidden;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 .render-container {
+  /* flex: 1; */
   display: flex;
   /* flex-direction: column; */
   flex-wrap: wrap;
