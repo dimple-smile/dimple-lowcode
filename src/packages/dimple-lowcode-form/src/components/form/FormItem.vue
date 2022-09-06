@@ -8,7 +8,11 @@
         <span class="tip-icon el-icon-warning"></span>
       </el-tooltip>
     </div>
-    <div class="content" :class="[computedSize]" :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }">
+    <div
+      class="content"
+      :class="[computedContentWidth !== '100%' ? computedSize : '']"
+      :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }"
+    >
       <el-input
         v-if="type === types.input"
         v-model="innerValue"
