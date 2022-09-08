@@ -15,6 +15,7 @@
         </div>
       </div>
       <div class="content dimple-lowcode-layout-content">
+        <slot name="render-container-header"></slot>
         <div
           class="render-container"
           ref="render-container"
@@ -51,6 +52,7 @@
           </div>
           <slot name="render-footer"> </slot>
         </div>
+        <slot name="render-container-footer"></slot>
       </div>
       <div v-show="!preview">
         <slot name="panel"></slot>
@@ -88,6 +90,7 @@ export default {
     dragDataAdapter: { type: Function, default: null },
     gutter: { type: String, default: '' },
     gutterPlacement: { type: String, default: 'right', options: ['top', 'bottom', 'left', 'right'] },
+    hideMask: { type: String, default: false },
   },
   data() {
     return {
@@ -235,7 +238,7 @@ export default {
       if (!this.currentRenderKey) this.$emit('update:currentComponent', null)
     },
     showMask(item) {
-      if (this.preview || !item) return
+      if (this.preview || !item || this.hideMask) return
       const currentComponent = this.currentComponent || {}
       const renderKey = this.renderKey
       return item[renderKey] === this.currentRenderKey || item[renderKey] === currentComponent[renderKey]
@@ -280,12 +283,12 @@ export default {
   height: 100%;
   flex: 1;
   overflow: hidden;
-  /* display: flex;
-  flex-direction: column; */
+  display: flex;
+  flex-direction: column;
 }
 
 .render-container {
-  /* flex: 1; */
+  flex: 1;
   display: flex;
   /* flex-direction: column; */
   flex-wrap: wrap;
