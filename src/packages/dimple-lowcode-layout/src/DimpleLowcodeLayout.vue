@@ -173,9 +173,11 @@ export default {
       if (currentTarget) {
         const item = this.componentList.find((item) => item[this.componentKey] === componentKey)
         const itemContainerStyle = (item && item.containerStyle) || {}
+        const currentClientHeight = currentTarget.clientHeight + 'px'
+        const currentClientWidth = currentTarget.clientWidth + 'px'
         this.$set(this, 'ghostStyle', {
-          height: itemContainerStyle.height || currentTarget.clientHeight + 'px',
-          width: itemContainerStyle.width || this.columnWidth || currentTarget.clientWidth + 'px',
+          height: itemContainerStyle.height || currentClientHeight,
+          width: itemContainerStyle.width || this.columnWidth || currentClientWidth,
         })
       }
       this.$emit('onComponentItemMouseMove', { renderKey, componentKey })
