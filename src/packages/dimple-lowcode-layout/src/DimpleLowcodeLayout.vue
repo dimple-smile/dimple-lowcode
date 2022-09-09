@@ -90,7 +90,7 @@ export default {
     dragDataAdapter: { type: Function, default: null },
     gutter: { type: String, default: '' },
     gutterPlacement: { type: String, default: 'right', options: ['top', 'bottom', 'left', 'right'] },
-    hideMask: { type: String, default: false },
+    hideMask: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -171,7 +171,7 @@ export default {
       check(e.target)
       this.currentRenderKey = renderKey
       if (currentTarget) {
-        const item = this.componentList.find((item) => item[this.componentKey] === componentKey)
+        const item = this.value.find((item) => item[this.renderKey] === renderKey)
         const itemContainerStyle = (item && item.containerStyle) || {}
         const currentClientHeight = currentTarget.clientHeight + 'px'
         const currentClientWidth = currentTarget.clientWidth + 'px'
