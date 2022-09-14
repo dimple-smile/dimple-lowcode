@@ -1,8 +1,5 @@
 <template>
-  <FormItem v-if="isFromItem" contentWidth="100%" v-bind="value.formItemDefaultProps">
-    <RenderComponent :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
-  </FormItem>
-  <RenderComponent v-else :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
+  <RenderComponent :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
 </template>
 
 <script>
@@ -37,7 +34,7 @@ export default {
         res[key] = this.value.props[key].value
       })
       const defaultProps = this.value.defaultProps || {}
-      return { ...defaultProps, ...res }
+      return { ...(this.value.formItemDefaultProps || {}), ...defaultProps, ...res }
     },
   },
 }

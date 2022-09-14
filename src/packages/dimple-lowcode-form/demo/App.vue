@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100vh">
-    <DimpleLowcodeForm />
+    <DimpleLowcodeForm :conatinerStyle="{ background: '#F7F8FA' }" />
   </div>
 </template>
 

@@ -71,10 +71,10 @@
           </div>
         </template>
 
-        <template #render-item="{ data }">
-          <Render :type="renderType" :value="data" :materials="innerMaterials" />
+        <template #render-item="{ data, index }">
+          <Render :type="renderType" :value="data" :materials="innerMaterials" :is-last="index === layout.length - 1" />
         </template>
-        
+
         <template #render-item-custom="{ data, index }">
           <slot name="render-item-custom" :data="data" :index="index"></slot>
         </template>
@@ -84,11 +84,21 @@
         </template>
 
         <template #render-footer>
-          <FormItem v-if="layout.length">
+          <FormItem v-if="!formConfig.isMoibileButtons && layout.length && formConfig.buttons.length">
             <template v-for="item in formConfig.buttons">
               <el-button :type="item.btnType" size="mini" @click="onOprateClick(item)">{{ item.text }}</el-button>
             </template>
           </FormItem>
+        </template>
+
+        <template #render-container-footer>
+          <div v-if="formConfig.isMoibileButtons && layout.length && formConfig.buttons.length" class="mobile-buttons">
+            <template v-for="(item, index) in formConfig.buttons">
+              <el-button :key="index + 'button'" class="mobile-buttons-item" :class="[item.btnType]" :type="item.btnType" size="mini" @click="onOprateClick(item)">{{ item.text }}</el-button>
+              <div v-if="index !== formConfig.buttons.length - 1" :key="index + 'button-padding'" style="width: 10px"></div>
+            </template>
+            <div class="safearea"></div>
+          </div>
         </template>
 
         <template #panel>
@@ -489,6 +499,30 @@ export default {
   background: #fff;
   /* border-left: 1px solid #ddd;
   border-right: 1px solid #ddd; */
+}
+
+.mobile-buttons {
+  padding: 10px 16px;
+  display: flex;
+  padding-bottom: 24px;
+}
+.mobile-buttons-item {
+  flex: 1;
+  height: 44px;
+  line-height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 4px;
+  font-size: 17px;
+}
+.mobile-buttons-item.secondary {
+  border: 1px solid #006df1;
+  color: #006df1;
+}
+
+.safearea {
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
 }
 </style>
 

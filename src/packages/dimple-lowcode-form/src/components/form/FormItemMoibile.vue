@@ -18,32 +18,36 @@
       <van-field clickable v-model="innerValue" type="tel" :placeholder="placeholder || '请输入手机号'" clearable @input="change" />
     </template>
     <template v-if="type === types.textarea">
-      <van-field clickable v-model="innerValue" type="textarea" :rows="rows" autosize :placeholder="placeholder || '请输入'" clearable @input="change" />
+      <van-field v-model="innerValue" type="textarea" :rows="rows" :placeholder="placeholder || '请输入'" show-word-limit clearable :maxlength="maxlength" v-bind="$attrs" @input="change" />
     </template>
     <template v-if="type === types.switch">
-      <van-field>
+      <van-field class="switch">
         <template #input>
           <van-switch v-model="innerValue" size="20" :active-color="primary" inactive-color="#dcdee0" v-bind="$attrs" @change="change" />
         </template>
       </van-field>
     </template>
     <template v-if="type === types.radio">
-      <van-field style="padding-top: 5px">
+      <van-field class="radio">
         <template #input>
-          <van-radio-group v-model="innerValue" :checked-color="primary" v-bind="$attrs" @change="change">
+          <van-radio-group v-model="innerValue" :checked-color="primary" direction="horizontal" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-radio :name="item[optionsValueKey]" style="margin-bottom: 10px">{{ item[optionsLabelKey] }}</van-radio>
+              <van-radio :name="item[optionsValueKey]" style="margin-bottom: 10px">
+                <div class="radio-text">{{ item[optionsLabelKey] }}</div>
+              </van-radio>
             </template>
           </van-radio-group>
         </template>
       </van-field>
     </template>
     <template v-if="type === types['checkbox-group']">
-      <van-field style="padding-top: 5px">
+      <van-field class="checkbox-group">
         <template #input>
-          <van-checkbox-group v-model="innerValue" :checked-color="primary" v-bind="$attrs" @change="change">
+          <van-checkbox-group v-model="innerValue" :checked-color="primary" direction="horizontal" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-checkbox :name="item[optionsValueKey]" shape="square" style="margin-bottom: 10px">{{ item[optionsLabelKey] }}</van-checkbox>
+              <van-checkbox :name="item[optionsValueKey]" shape="square" style="margin-bottom: 10px">
+                <div class="checkbox-text">{{ item[optionsLabelKey] }}</div>
+              </van-checkbox>
             </template>
           </van-checkbox-group>
         </template>
@@ -57,6 +61,7 @@
         name="picker"
         :value="activeSelectItem && activeSelectItem[optionsLabelKey]"
         :placeholder="placeholder || '请点击选择'"
+        is-link
         v-bind="$attrs"
         @click="showPicker = true"
       />
@@ -66,15 +71,14 @@
     </template>
 
     <template v-if="type === types['time']">
-      <van-field readonly clickable :value="innerValue" :placeholder="placeholder || '点击选择时间'" @click="showPicker = true" />
+      <van-field class="time" readonly clickable is-link :value="innerValue" :placeholder="placeholder || '点击选择时间'" @click="showPicker = true" />
       <van-popup v-model="showPicker" position="bottom">
         <van-datetime-picker v-model="innerValue" type="time" @confirm="onTimeChange" @cancel="showPicker = false" />
       </van-popup>
     </template>
 
     <template v-if="type === types['date']">
-
-      <van-field readonly clickable :border="false" :value="dateFormat(innerValue)" :placeholder="placeholder || '点击选择日期'" @click="showPicker = true" />
+      <van-field class="time" readonly clickable is-link :border="false" :value="dateFormat(innerValue)" :placeholder="placeholder || '点击选择日期'" @click="showPicker = true" />
       <van-calendar
         v-model="showPicker"
         :color="primary"
@@ -86,19 +90,19 @@
     </template>
 
     <template v-if="type === types['datetime']">
-      <van-field readonly clickable :border="false" :value="dateTimeFormat(innerValue)" :placeholder="placeholder || '点击选择日期时间'" @click="showPicker = true" />
+      <van-field class="time" readonly clickable is-link :border="false" :value="dateTimeFormat(innerValue)" :placeholder="placeholder || '点击选择日期时间'" @click="showPicker = true" />
       <van-popup v-model="showPicker" position="bottom">
         <van-datetime-picker v-model="currentDateTime" :color="primary" type="datetime" @confirm="onDateTimeChange" @cancel="showPicker = false" />
       </van-popup>
     </template>
 
     <template v-if="type === types['daterange']">
-      <van-field readonly clickable :border="false" :value="dateRangeFormat(innerValue)" :placeholder="placeholder || '点击选择日期范围'" @click="showPicker = true" />
+      <van-field class="time" readonly clickable is-link :border="false" :value="dateRangeFormat(innerValue)" :placeholder="placeholder || '点击选择日期范围'" @click="showPicker = true" />
       <van-calendar v-model="showPicker" type="range" :color="primary" @confirm="onDateRangeChange" @cancel="showPicker = false" />
     </template>
 
     <template v-if="type === types['datetimerange']">
-      <van-field readonly clickable :border="false" :value="dateTimeRangeFormat(innerValue)" :placeholder="placeholder || '点击选择日期时间范围'" @click="showPicker = true" />
+      <van-field class="time" readonly clickable is-link :border="false" :value="dateTimeRangeFormat(innerValue)" :placeholder="placeholder || '点击选择日期时间范围'" @click="showPicker = true" />
       <van-popup v-model="showPicker" position="bottom">
         <van-datetime-picker v-model="currentDateTimeRangeStart" title="开始日期时间" :color="primary" type="datetime" @confirm="onDateTimeRangeChange" @cancel="showPicker = false" />
         <van-datetime-picker v-model="currentDateTimeRangeEnd" title="结束日期时间" :color="primary" type="datetime" confirm-button-text="_" cancel-button-text="_" />
@@ -106,16 +110,18 @@
     </template>
 
     <template v-else-if="type === types['text']">
-      {{ value }}
+      <div class="text">
+        {{ value }}
+      </div>
     </template>
   </div>
 </template>
 
 <script>
-import { Form, Field, Switch, Radio, RadioGroup, Checkbox, CheckboxGroup, Popup, Picker, DatetimePicker, Calendar } from 'vant'
+import { Form, Field, Switch, Radio, RadioGroup, Checkbox, CheckboxGroup, Popup, Picker, DatetimePicker, Calendar, CellGroup } from 'vant'
 import dayjs from 'dayjs'
 const VantComponents = {}
-;[Form, Field, Switch, Radio, RadioGroup, Checkbox, CheckboxGroup, Popup, Picker, DatetimePicker, Calendar].map((item) => {
+;[Form, Field, Switch, Radio, RadioGroup, Checkbox, CheckboxGroup, Popup, Picker, DatetimePicker, Calendar, CellGroup].map((item) => {
   VantComponents[item.name] = item
 })
 
@@ -151,6 +157,7 @@ export default {
     optionsValueKey: { type: String, default: 'value' },
     placeholder: { type: String, default: '' },
     rows: { type: Number, default: 4 },
+    maxlength: { type: Number, default: 500 },
   },
   data() {
     return {
@@ -253,26 +260,94 @@ export default {
 .dimple-lowcode-form-item-mobile {
   width: 100%;
   box-sizing: border-box;
+  .text {
+    padding-top: 14px;
+    padding-bottom: 15px;
+    // text-align: right;
+  }
   // border: 1px solid #ddd;
   .van-cell {
     padding: 0px;
     .van-cell__value {
       .van-field__body {
+        padding-right: 15px;
+        padding-left: 15px;
+
         input {
-          box-sizing: border-box;
-          height: 28px;
-          line-height: 28px;
-          border: 1px solid #dcdfe6;
-          padding: 0 18px;
-          border-radius: 4px;
+          // box-sizing: border-box;
+          height: 48px;
+          line-height: 48px;
+          // border: 1px solid #dcdfe6;
+          // padding: 0 18px;
+          // border-radius: 4px;
+          text-align: right;
         }
         textarea {
-          box-sizing: border-box;
-          border: 1px solid #dcdfe6;
-          padding: 4px 18px;
-          border-radius: 4px;
+          // box-sizing: border-box;
+          // border: 1px solid #dcdfe6;
+          // padding: 4px 18px;
+          // border-radius: 4px;
+          padding-top: 15px;
+          padding-bottom: 15px;
         }
       }
+    }
+  }
+  .van-field__word-limit {
+    margin-bottom: 5px;
+    margin-right: 15px;
+    color: #ccc;
+  }
+  .van-cell__right-icon {
+    line-height: 48px;
+    margin-right: 15px;
+  }
+
+  .radio {
+    padding-top: 14px;
+    .van-field__control {
+      justify-content: flex-end;
+    }
+    .radio-text {
+      width: 15vw;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      // text-align: right;
+    }
+    .van-radio-group--horizontal {
+      justify-content: flex-end;
+    }
+  }
+
+  .time {
+    .van-cell__value {
+      .van-field__body {
+        padding-right: 0px;
+      }
+    }
+  }
+
+  .checkbox-group {
+    padding-top: 14px;
+    .van-field__control {
+      justify-content: flex-end;
+    }
+    .checkbox-text {
+      max-width: 15vw;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: right;
+    }
+    .van-checkbox-group--horizontal {
+      justify-content: flex-end;
+    }
+  }
+
+  .switch {
+    .van-field__control {
+      justify-content: flex-end;
     }
   }
 }

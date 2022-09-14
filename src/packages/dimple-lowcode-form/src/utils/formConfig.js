@@ -35,14 +35,15 @@ const formConfig = () => {
     id: uniqueId(`${+new Date()}_`), // 表单id，不传会自动生成
     name: '', // 表单名称
     columnWidth: '100%', // 表单项的列度
-    style: { padding: '20px' },
+    style: { padding: '20px', background: '#eeeeee' },
     formProps: {
       // 表单的配置
       labelLength: 8, // 表单下所有项目的文本宽度
       alignItems: 'center', // 表单下所有项目的内容对齐方向
-      labelPosition: 'right', // 表单下所有项目的标签对齐方向
+      labelPosition: 'left', // 表单下所有项目的标签对齐方向
       // marginBottom: '20px', // 表单下所有项目的距离底部距离
     },
+    isMoibileButtons: true, // 是否使用移动端按钮
     buttons: [], // 表单的操作按钮组，可以配置多个，每一项都需要满足formButtonItem的配置
     save: { ...formButtonItem, text: '保存', btnType: 'primary' }, // 表单保存配置，和按钮配置formButtonItem一样
   }
