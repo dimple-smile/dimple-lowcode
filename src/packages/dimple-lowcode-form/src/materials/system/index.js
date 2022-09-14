@@ -1,4 +1,5 @@
-import FormItem from './components/FormItem.vue'
+// import FormItem from './components/FormItem.vue'
+import { FormItem } from '../../components/form'
 import { valueTypes } from '../../utils/valueTypes'
 import { editTypes } from '../../utils/editTypes'
 
@@ -36,7 +37,7 @@ const systemMaterials = () => [
         key: 'mobile.text',
         name: '纯文本',
         component: FormItem,
-        defaultProps: { type: 'mobile-text', alignItems:'flex-start' },
+        defaultProps: { type: 'mobile-text', alignItems: 'flex-start' },
       },
       {
         key: 'mobile.textarea',
@@ -58,7 +59,7 @@ const systemMaterials = () => [
         key: 'mobile.radio',
         name: '单选框',
         component: FormItem,
-        defaultProps: { type: 'mobile-radio', alignItems:'flex-start' },
+        defaultProps: { type: 'mobile-radio', alignItems: 'flex-start' },
         props: {
           options: { label: '选项列表', value: [], editType: editTypes.options },
         },
@@ -68,7 +69,7 @@ const systemMaterials = () => [
         name: '多选框',
         component: FormItem,
         valueType: valueTypes.array.value,
-        defaultProps: { type: 'mobile-checkbox-group', alignItems:'flex-start' },
+        defaultProps: { type: 'mobile-checkbox-group', alignItems: 'flex-start' },
         props: {
           options: { label: '选项列表', value: [], editType: editTypes.options },
         },
@@ -136,7 +137,7 @@ const systemMaterials = () => [
         key: 'system.textarea',
         name: '文本域',
         component: FormItem,
-        defaultProps: { type: 'textarea', alignItems:'flex-start' },
+        defaultProps: { type: 'textarea', alignItems: 'flex-start' },
         h: 3,
       },
       {

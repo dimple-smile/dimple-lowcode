@@ -1,227 +1,250 @@
 <template>
-  <div class="dimple-lowcode-form-item" :class="[type]" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
-    <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
-      <span v-if="required" class="required-icon">*</span>
-      <span>{{ label }}</span>
-      <slot name="label"></slot>
-      <el-tooltip v-if="tip" class="item" effect="dark" :content="tip" placement="top">
-        <span class="tip-icon el-icon-warning"></span>
-      </el-tooltip>
-    </div>
-    <div
-      class="content"
-      :class="[computedContentWidth !== '100%' ? computedSize : '']"
-      :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }"
-    >
-      <el-input
-        v-if="type === types.input"
-        v-model="innerValue"
-        v-bind="$attrs"
-        :type="inputType"
-        :placeholder="placeholder || '请输入'"
-        :size="computedSize"
-        :disabled="disabled"
-        clearable
-        @input="handleInput"
-        @change="change"
-      ></el-input>
-      <el-input
-        v-if="type === types.number"
-        v-model="innerValue"
-        v-bind="$attrs"
-        :placeholder="placeholder || '请输入'"
-        :size="computedSize"
-        :disabled="disabled"
-        clearable
-        @input="handleNumberInput"
-        @change="handleNumberInputChange"
-        @blur="handleNumberBlur"
-      ></el-input>
-      <el-input
-        v-if="type === types.float"
-        v-model="innerValue"
-        v-bind="$attrs"
-        :placeholder="placeholder || '请输入'"
-        :size="computedSize"
-        :disabled="disabled"
-        clearable
-        @input="handleFloatInput"
-        @blur="handleNumberBlur"
-      ></el-input>
-      <el-input
-        v-if="type === types.textarea"
-        v-model="innerValue"
-        type="textarea"
-        show-word-limit
-        :autosize="{ minRows: 5, maxRows: 5 }"
-        :maxlength="$attrs.maxlength || 50"
-        clearable
-        v-bind="$attrs"
-        :placeholder="placeholder || '请输入'"
-        :size="computedSize"
-        :disabled="disabled"
-        @change="change"
-      ></el-input>
-      <el-switch v-else-if="type === types.switch" v-model="innerValue" :placeholder="placeholder" :size="computedSize" :disabled="disabled" v-bind="$attrs" @change="change"></el-switch>
-      <template v-else-if="type === types.radio">
-        <el-radio-group class="radio-group" v-model="innerValue" @change="change" :disabled="disabled">
-          <el-radio :disabled="disabled" class="radio" v-for="item in computeOptions" :label="item[optionsValueKey]" :key="item[optionsValueKey]" :style="horizontalRadio ? 'margin-bottom: 0' : ''">{{
-            item[optionsLabelKey]
-          }}</el-radio>
-        </el-radio-group>
-      </template>
-      <template v-else-if="type === types.select">
-        <el-select
-          class="select"
-          popper-class="aiot-form-item-select"
+  <div style="position: relative">
+    <div class="dimple-lowcode-form-item" :class="[type, isMoibile ? 'mobile' : '']" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
+      <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
+        <span v-if="required" class="required-icon">*</span>
+        <span>{{ label }}</span>
+        <slot name="label"></slot>
+        <el-tooltip v-if="tip" class="item" effect="dark" :content="tip" placement="top">
+          <span class="tip-icon el-icon-warning"></span>
+        </el-tooltip>
+      </div>
+      <div
+        v-if="!isMoibileTextArea"
+        class="content"
+        :class="[computedContentWidth !== '100%' ? computedSize : '']"
+        :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }"
+      >
+        <el-input
+          v-if="type === types.input"
           v-model="innerValue"
-          :placeholder="placeholder || '请选择'"
-          @change="change"
+          v-bind="$attrs"
+          :type="inputType"
+          :placeholder="placeholder || '请输入'"
           :size="computedSize"
           :disabled="disabled"
-          v-bind="$attrs"
           clearable
-        >
-          <el-option v-for="item in computeOptions" :key="item[optionsValueKey]" :label="item[optionsLabelKey]" :value="item[optionsValueKey]"> </el-option>
-        </el-select>
-      </template>
-      <template v-else-if="type === types['checkbox-group']">
-        <el-checkbox-group v-model="innerValue" :disabled="disabled" @change="change">
-          <el-checkbox
-            class="checkbox"
-            v-for="item in computeOptions"
-            :key="item[optionsValueKey]"
-            :label="item[optionsValueKey]"
-            :disabled="disabled"
-            :style="horizontalCheckbox ? 'margin-bottom: 0' : ''"
-          >
-            {{ item[optionsLabelKey] }}
-          </el-checkbox>
-        </el-checkbox-group>
-      </template>
-      <template v-else-if="type === types['amount-input']">
-        <amount-input v-model="innerValue" :size="computedSize" :disabled="disabled" :placeholder="placeholder" @change="change"></amount-input>
-      </template>
-      <template v-else-if="type === types['amount-text']">
-        <amount-text :value="innerValue"></amount-text>
-      </template>
-      <template v-else-if="type === types['time']">
-        <el-time-select
-          v-model="innerValue"
-          style="width: 100%"
-          :size="computedSize"
-          :placeholder="placeholder || '时间'"
-          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
-          v-bind="$attrs"
+          @input="handleInput"
           @change="change"
-        >
-        </el-time-select>
-      </template>
-      <template v-else-if="type === types['date']">
-        <el-date-picker
-          v-model="innerValue"
-          style="width: 100%"
-          type="date"
-          :size="computedSize"
-          :placeholder="placeholder || '日期'"
-          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
-          v-bind="$attrs"
-          @change="change"
-        >
-        </el-date-picker>
-      </template>
-      <template v-else-if="type === types['datetime']">
-        <el-date-picker
-          v-model="innerValue"
-          style="width: 100%"
-          type="datetime"
-          :size="computedSize"
-          :placeholder="placeholder || '日期时间'"
-          :default-time="$attrs['default-time'] || $attrs['defaultTime'] || '23:59:59'"
-          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
-          v-bind="$attrs"
-          @change="change"
-        >
-        </el-date-picker>
-      </template>
-      <template v-else-if="type === types['daterange']">
-        <el-date-picker
-          v-model="innerValue"
-          style="width: 100%"
-          type="daterange"
-          :size="computedSize"
-          :placeholder="placeholder || '日期范围'"
-          :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
-          :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期'"
-          :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期'"
-          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
-          :format="$attrs['format'] || 'yyyy-MM-dd'"
-          v-bind="$attrs"
-          @change="change"
-        >
-        </el-date-picker>
-      </template>
-      <template v-else-if="type === types['datetimerange']">
-        <el-date-picker
-          v-model="innerValue"
-          style="width: 100%"
-          type="datetimerange"
-          :size="computedSize"
-          :placeholder="placeholder || '日期时间范围'"
-          :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
-          :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期时间'"
-          :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期时间'"
-          :default-time="$attrs['default-time'] || $attrs['defaultTime'] || ['00:00:00', '23:59:59']"
-          :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
-          :format="$attrs['format'] || 'yyyy-MM-dd HH:mm:ss'"
-          v-bind="$attrs"
-          @change="change"
-        >
-        </el-date-picker>
-      </template>
-      <template v-else-if="type === types['text']">
-        <div style="width: 100%">
-          {{ value }}
-        </div>
-      </template>
-      <template v-else-if="type === types['autocomplete']">
-        <el-autocomplete
-          style="width: 100%"
+        ></el-input>
+        <el-input
+          v-if="type === types.number"
           v-model="innerValue"
           v-bind="$attrs"
-          v-on="$listeners"
-          :size="computedSize"
-          :fetch-suggestions="querySearch"
           :placeholder="placeholder || '请输入'"
+          :size="computedSize"
+          :disabled="disabled"
           clearable
-          @select="autocompleteChange"
-        >
-          <template #default="{ item }">
-            <span>{{ item[optionsLabelKey] }}</span>
-          </template>
-        </el-autocomplete>
-      </template>
-      <template v-if="type.indexOf('mobile-') > -1">
-        <FormItemMoibile
+          @input="handleNumberInput"
+          @change="handleNumberInputChange"
+          @blur="handleNumberBlur"
+        ></el-input>
+        <el-input
+          v-if="type === types.float"
           v-model="innerValue"
-          :type="type.replace('mobile-', '')"
-          :options="computeOptions"
-          :optionsLabelKey="optionsLabelKey"
-          :optionsValueKey="optionsValueKey"
-          :placeholder="placeholder"
           v-bind="$attrs"
+          :placeholder="placeholder || '请输入'"
+          :size="computedSize"
+          :disabled="disabled"
+          clearable
+          @input="handleFloatInput"
+          @blur="handleNumberBlur"
+        ></el-input>
+        <el-input
+          v-if="type === types.textarea"
+          v-model="innerValue"
+          type="textarea"
+          show-word-limit
+          :autosize="{ minRows: 5, maxRows: 5 }"
+          :maxlength="$attrs.maxlength || 50"
+          clearable
+          v-bind="$attrs"
+          :placeholder="placeholder || '请输入'"
+          :size="computedSize"
+          :disabled="disabled"
           @change="change"
-        />
-      </template>
-      <slot v-else></slot>
-      <div v-if="innerError" class="error-message" :class="{ block: blockMessage, inline: !blockMessage }">
-        <i class="iconfont icontishixinxi error-message-icon"></i>
-        {{ innerError }}
-      </div>
-      <div v-if="$slots.append" class="error-message inline">
-        <slot name="append"></slot>
+        ></el-input>
+        <el-switch v-else-if="type === types.switch" v-model="innerValue" :placeholder="placeholder" :size="computedSize" :disabled="disabled" v-bind="$attrs" @change="change"></el-switch>
+        <template v-else-if="type === types.radio">
+          <el-radio-group class="radio-group" v-model="innerValue" @change="change" :disabled="disabled">
+            <el-radio
+              :disabled="disabled"
+              class="radio"
+              v-for="item in computeOptions"
+              :label="item[optionsValueKey]"
+              :key="item[optionsValueKey]"
+              :style="horizontalRadio ? 'margin-bottom: 0' : ''"
+              >{{ item[optionsLabelKey] }}</el-radio
+            >
+          </el-radio-group>
+        </template>
+        <template v-else-if="type === types.select">
+          <el-select
+            class="select"
+            popper-class="aiot-form-item-select"
+            v-model="innerValue"
+            :placeholder="placeholder || '请选择'"
+            @change="change"
+            :size="computedSize"
+            :disabled="disabled"
+            v-bind="$attrs"
+            clearable
+          >
+            <el-option v-for="item in computeOptions" :key="item[optionsValueKey]" :label="item[optionsLabelKey]" :value="item[optionsValueKey]"> </el-option>
+          </el-select>
+        </template>
+        <template v-else-if="type === types['checkbox-group']">
+          <el-checkbox-group v-model="innerValue" :disabled="disabled" @change="change">
+            <el-checkbox
+              class="checkbox"
+              v-for="item in computeOptions"
+              :key="item[optionsValueKey]"
+              :label="item[optionsValueKey]"
+              :disabled="disabled"
+              :style="horizontalCheckbox ? 'margin-bottom: 0' : ''"
+            >
+              {{ item[optionsLabelKey] }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </template>
+        <template v-else-if="type === types['amount-input']">
+          <amount-input v-model="innerValue" :size="computedSize" :disabled="disabled" :placeholder="placeholder" @change="change"></amount-input>
+        </template>
+        <template v-else-if="type === types['amount-text']">
+          <amount-text :value="innerValue"></amount-text>
+        </template>
+        <template v-else-if="type === types['time']">
+          <el-time-select
+            v-model="innerValue"
+            style="width: 100%"
+            :size="computedSize"
+            :placeholder="placeholder || '时间'"
+            :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+            v-bind="$attrs"
+            @change="change"
+          >
+          </el-time-select>
+        </template>
+        <template v-else-if="type === types['date']">
+          <el-date-picker
+            v-model="innerValue"
+            style="width: 100%"
+            type="date"
+            :size="computedSize"
+            :placeholder="placeholder || '日期'"
+            :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+            v-bind="$attrs"
+            @change="change"
+          >
+          </el-date-picker>
+        </template>
+        <template v-else-if="type === types['datetime']">
+          <el-date-picker
+            v-model="innerValue"
+            style="width: 100%"
+            type="datetime"
+            :size="computedSize"
+            :placeholder="placeholder || '日期时间'"
+            :default-time="$attrs['default-time'] || $attrs['defaultTime'] || '23:59:59'"
+            :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+            v-bind="$attrs"
+            @change="change"
+          >
+          </el-date-picker>
+        </template>
+        <template v-else-if="type === types['daterange']">
+          <el-date-picker
+            v-model="innerValue"
+            style="width: 100%"
+            type="daterange"
+            :size="computedSize"
+            :placeholder="placeholder || '日期范围'"
+            :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
+            :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期'"
+            :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期'"
+            :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+            :format="$attrs['format'] || 'yyyy-MM-dd'"
+            v-bind="$attrs"
+            @change="change"
+          >
+          </el-date-picker>
+        </template>
+        <template v-else-if="type === types['datetimerange']">
+          <el-date-picker
+            v-model="innerValue"
+            style="width: 100%"
+            type="datetimerange"
+            :size="computedSize"
+            :placeholder="placeholder || '日期时间范围'"
+            :range-separator="$attrs['range-separator'] || $attrs['rangeSeparator'] || '至'"
+            :start-placeholder="$attrs['start-placeholder'] || $attrs['startPlaceholder'] || '开始日期时间'"
+            :end-placeholder="$attrs['end-placeholder'] || $attrs['endPlaceholder'] || '结束日期时间'"
+            :default-time="$attrs['default-time'] || $attrs['defaultTime'] || ['00:00:00', '23:59:59']"
+            :value-format="$attrs['value-format'] || $attrs['valueFormat'] || 'timestamp'"
+            :format="$attrs['format'] || 'yyyy-MM-dd HH:mm:ss'"
+            v-bind="$attrs"
+            @change="change"
+          >
+          </el-date-picker>
+        </template>
+        <template v-else-if="type === types['text']">
+          <div style="width: 100%">
+            {{ value }}
+          </div>
+        </template>
+        <template v-else-if="type === types['autocomplete']">
+          <el-autocomplete
+            style="width: 100%"
+            v-model="innerValue"
+            v-bind="$attrs"
+            v-on="$listeners"
+            :size="computedSize"
+            :fetch-suggestions="querySearch"
+            :placeholder="placeholder || '请输入'"
+            clearable
+            @select="autocompleteChange"
+          >
+            <template #default="{ item }">
+              <span>{{ item[optionsLabelKey] }}</span>
+            </template>
+          </el-autocomplete>
+        </template>
+        <template v-if="isMoibile">
+          <FormItemMoibile
+            v-model="innerValue"
+            :type="type.replace('mobile-', '')"
+            :options="computeOptions"
+            :optionsLabelKey="optionsLabelKey"
+            :optionsValueKey="optionsValueKey"
+            :placeholder="placeholder"
+            v-bind="$attrs"
+            @change="change"
+          />
+        </template>
+        <slot v-else></slot>
+        <div v-if="innerError" class="error-message" :class="{ block: blockMessage, inline: !blockMessage }">
+          <i class="iconfont icontishixinxi error-message-icon"></i>
+          {{ innerError }}
+        </div>
+        <div v-if="$slots.append" class="error-message inline">
+          <slot name="append"></slot>
+        </div>
       </div>
     </div>
+    <div v-if="isMoibileTextArea" class="mobile-textare-border"></div>
+    <template v-if="isMoibileTextArea">
+      <FormItemMoibile
+        v-model="innerValue"
+        :type="type.replace('mobile-', '')"
+        :options="computeOptions"
+        :optionsLabelKey="optionsLabelKey"
+        :optionsValueKey="optionsValueKey"
+        :placeholder="placeholder"
+        v-bind="$attrs"
+        @change="change"
+      />
+    </template>
+    <div v-if="isMoibile && bottomBorder" class="mobile-border-bottom"></div>
   </div>
 </template>
 
@@ -279,6 +302,7 @@ export default {
     horizontalCheckbox: { type: Boolean, default: false },
     // inputFilterString: { type: Array, default: () => [',', '。', '，', '!', '$', '^', '`', '、'] },
     inputFilterString: { type: Array, default: () => [] },
+    bottomBorder: { type: Boolean, default: true },
   },
   data() {
     return {
@@ -297,6 +321,12 @@ export default {
         parentName = parent.$options._componentTag
       }
       return parent
+    },
+    isMoibile() {
+      return this.type.indexOf('mobile') > -1
+    },
+    isMoibileTextArea() {
+      return this.type.indexOf('mobile-textarea') > -1
     },
     computedSize() {
       return this.size || this.form.size || 'mini'
@@ -317,7 +347,7 @@ export default {
       return this.px2vw(this.contentWidth || this.form.contentWidth || '')
     },
     computeLabelPosition() {
-      return this.labelPosition || this.form.labelPosition || 'right'
+      return this.labelPosition || this.form.labelPosition || 'left'
     },
     computeAlignItems() {
       if (this.blockMessage) return this.form.alignItems || 'flex-start'
@@ -325,7 +355,8 @@ export default {
       return this.alignItems || this.form.alignItems || 'center'
     },
     computeMarginBottom() {
-      return this.px2vw(this.marginBottom || this.form.marginBottom || '')
+      if (this.isMoibile) return this.px2vw(this.marginBottom || '')
+      return this.px2vw(this.marginBottom || this.form.marginBottom || '20px')
     },
     computeOptions() {
       if (Array.isArray(this.options)) return this.options
@@ -475,15 +506,29 @@ export default {
 .dimple-lowcode-form-item {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
   font-size: 14px;
 }
+
+.dimple-lowcode-form-item.mobile {
+  background: #fff;
+}
+
 .label {
   margin-right: 10px;
   height: 30px;
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  color: #333333;
+  font-size: 14px;
 }
+
+.dimple-lowcode-form-item.mobile .label {
+  padding-left: 15px;
+  height: 48px;
+}
+
 .label.right {
   justify-content: flex-end;
 }
@@ -491,9 +536,31 @@ export default {
   justify-content: flex-start;
 }
 
+.mobile-border-bottom {
+  position: absolute;
+  left: 15px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: #e5e5e5;
+  transform:scaleY(0.5)
+  /* background: #ebedf0; */
+}
+
+.mobile-textare-border {
+  position: absolute;
+  left: 15px;
+  top: 47px;
+  right: 0;
+  height: 1px;
+  background: #e5e5e5;
+  transform:scaleY(0.5)
+  /* background: #ebedf0; */
+}
+
 .required-icon {
   margin-right: 5px;
-  margin-top: 8px;
+  margin-top: 5px;
   color: #dd3914;
 }
 .tip-icon {

@@ -1,5 +1,8 @@
 <template>
   <div class="dimple-lowcode-form-buttons">
+    <div style="margin-bottom: 20px">
+      <el-switch v-model="value.isMoibileButtons" active-text="使用移动端按钮样式"> </el-switch>
+    </div>
     <div class="title">
       <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加操作按钮</el-button>
       <span>
@@ -69,6 +72,7 @@ export default {
       btnTypeOptions: [
         { value: 'default', label: '默认（白）' },
         { value: 'primary', label: '主要（蓝）' },
+        { value: 'secondary', label: '次要（蓝框）' },
         { value: 'success', label: '成功（绿）' },
         { value: 'info', label: '信息（灰）' },
         { value: 'warning', label: '警告（黄）' },
@@ -78,15 +82,14 @@ export default {
   },
   methods: {
     add() {
-      const getValueItem = () => formButtonItem
-      this.value.buttons.push(getValueItem())
+      this.value.buttons.push({ ...formButtonItem })
     },
   },
 }
 </script>
 
 <style scoped>
-.dimple-lowcode-form-buttons{
+.dimple-lowcode-form-buttons {
   padding-right: 10px;
 }
 .dimple-lowcode-form-buttons .title {
