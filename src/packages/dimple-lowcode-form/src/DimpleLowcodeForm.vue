@@ -72,7 +72,7 @@
         </template>
 
         <template #render-item="{ data, index }">
-          <Render :type="renderType" :value="data" :materials="innerMaterials" :is-last="index === layout.length - 1" />
+          <Render :type="data.renderType || renderType" :value="data" :materials="innerMaterials" :is-last="index === layout.length - 1" />
         </template>
 
         <template #render-item-custom="{ data, index }">
