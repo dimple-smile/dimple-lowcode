@@ -1,6 +1,6 @@
 <template>
-  <div style="padding: 20px;width: 1000px;">
-    {{ size }}
+  <div>
+    1
   </div>
 </template>
 
