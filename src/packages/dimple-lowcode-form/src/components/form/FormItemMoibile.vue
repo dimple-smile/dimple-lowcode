@@ -114,6 +114,10 @@
         {{ value }}
       </div>
     </template>
+
+    <template v-else>
+      <slot></slot>
+    </template>
   </div>
 </template>
 

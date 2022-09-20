@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100vh">
-    <DimpleLowcodeForm v-model="data" :columnWidth="''" :systemMaterials="[]" :materials="materials" renderType="custom">
-      <template #header><div></div> </template>
+    <DimpleLowcodeForm v-model="data" :materials="materials">
+      <!-- <template #header><div></div> </template>
       <template #panel><div></div> </template>
       <template #render-item-mask="{ data, index }">
         <div class="mask">
@@ -10,7 +10,7 @@
           <el-button size="mini" type="text" @click="setSize(data, index, 'large')">大</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="remove(index)"></el-button>
         </div>
-      </template>
+      </template> -->
     </DimpleLowcodeForm>
   </div>
 </template>
@@ -33,10 +33,8 @@ export default {
             {
               name: '首页1',
               key: 'test',
-              defaultProps: { size: 'small' },
               component: Test,
-              containerStyle: { width: '50%' },
-              style: {},
+              renderType: 'mobile-form-item',
             },
           ],
         },

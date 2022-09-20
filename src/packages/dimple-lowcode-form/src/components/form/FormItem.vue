@@ -3,8 +3,9 @@
     <div class="dimple-lowcode-form-item" :class="[type, isMoibile ? 'mobile' : '']" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
       <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
         <span v-if="required" class="required-icon">*</span>
-        <span>{{ label }}</span>
-        <slot name="label"></slot>
+        <slot name="label">
+          <span>{{ label }}</span>
+        </slot>
         <el-tooltip v-if="tip" class="item" effect="dark" :content="tip" placement="top">
           <span class="tip-icon el-icon-warning"></span>
         </el-tooltip>
@@ -209,7 +210,10 @@
             </template>
           </el-autocomplete>
         </template>
-        <template v-if="isMoibile">
+        <template v-else-if="type === 'custom'">
+          <slot></slot>
+        </template>
+        <template v-else-if="isMoibile">
           <FormItemMoibile
             v-model="innerValue"
             :type="type.replace('mobile-', '')"
@@ -303,6 +307,7 @@ export default {
     // inputFilterString: { type: Array, default: () => [',', '。', '，', '!', '$', '^', '`', '、'] },
     inputFilterString: { type: Array, default: () => [] },
     bottomBorder: { type: Boolean, default: true },
+    mobile: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -323,7 +328,7 @@ export default {
       return parent
     },
     isMoibile() {
-      return this.type.indexOf('mobile') > -1
+      return this.type.indexOf('mobile') > -1 || this.mobile
     },
     isMoibileTextArea() {
       return this.type.indexOf('mobile-textarea') > -1
@@ -511,6 +516,7 @@ export default {
 
 .dimple-lowcode-form-item.mobile {
   background: #fff;
+  min-height: 48px;
 }
 
 .label {
@@ -543,7 +549,7 @@ export default {
   bottom: 0;
   height: 1px;
   background: #e5e5e5;
-  transform:scaleY(0.5)
+  transform: scaleY(0.5);
   /* background: #ebedf0; */
 }
 
@@ -554,7 +560,7 @@ export default {
   right: 0;
   height: 1px;
   background: #e5e5e5;
-  transform:scaleY(0.5)
+  transform: scaleY(0.5);
   /* background: #ebedf0; */
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <FormItem v-if="isFromItem" contentWidth="100%" v-bind="value.formItemDefaultProps">
+  <FormItem v-if="isFromItem" contentWidth="100%" v-bind="value.formItemDefaultProps" :mobile="isMobileFormItem" type="custom">
     <RenderComponent :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
   </FormItem>
   <RenderComponent v-else :component="customComponent" v-model="value.value" :props="componentProps"></RenderComponent>
@@ -18,7 +18,10 @@ export default {
   },
   computed: {
     isFromItem() {
-      return this.type === 'form-item'
+      return this.type === 'form-item' || this.type === 'mobile-form-item'
+    },
+    isMobileFormItem() {
+      return this.type === 'mobile-form-item'
     },
     customComponent() {
       let res = null

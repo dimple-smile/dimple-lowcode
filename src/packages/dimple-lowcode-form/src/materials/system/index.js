@@ -155,7 +155,6 @@ const systemMaterials = () => [
         name: '文本域',
         component: PcFormItem,
         defaultProps: { type: 'textarea', alignItems: 'flex-start' },
-        h: 3,
       },
       {
         key: 'system.select',
