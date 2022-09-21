@@ -46,10 +46,10 @@
         <el-button size="mini" type="primary" @click="defaultValueDialogVisible = false">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`" :visible.sync="propsItemEditorDialogVisible">
+    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`" :visible.sync="propsItemEditorDialogVisible" destroy-on-close>
       <Form v-if="currentPropsItem">
         <template v-if="currentPropsItem.editType === 'custom'">
-          <Render v-model="currentPropsItem" :materials="materials" />
+          <Render v-if="propsItemEditorDialogVisible" v-model="currentPropsItem" :materials="materials" />
         </template>
         <template v-else>
           <OptionsEditor v-if="currentPropsItem.editType === 'options'" v-model="currentPropsItem" />
