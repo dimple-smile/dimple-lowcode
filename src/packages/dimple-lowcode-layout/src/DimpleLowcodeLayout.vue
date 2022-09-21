@@ -91,6 +91,7 @@ export default {
     gutter: { type: String, default: '' },
     gutterPlacement: { type: String, default: 'right', options: ['top', 'bottom', 'left', 'right'] },
     hideMask: { type: Boolean, default: false },
+    isColumn: {type: Boolean, default: false}
   },
   data() {
     return {
@@ -125,7 +126,8 @@ export default {
     },
     computedContainerStyle() {
       const res = this.containerStyle || {}
-      if ((!res['flex-direction'] || !res['flexDirection']) && this.columnWidth === '100%') {
+      res['flex-direction'] = ''
+      if ((!res['flex-direction'] || !res['flexDirection']) && this.columnWidth === '100%' && this.isColumn) {
         res['flex-direction'] = 'column'
       }
       return res
@@ -148,6 +150,9 @@ export default {
     getRenderItemContainerStyle(item) {
       const itemContainerStyle = cloneDeep(item.containerStyle || {})
       if (this.columnWidth && !itemContainerStyle.width) itemContainerStyle.width = this.columnWidth
+      if(this.computedContainerStyle['flex-direction'] !== 'column' && itemContainerStyle.flex == 1){
+        delete itemContainerStyle.flex
+      }
       return itemContainerStyle
     },
     getRenderItemStyle(item) {

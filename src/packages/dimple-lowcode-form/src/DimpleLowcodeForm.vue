@@ -13,6 +13,7 @@
         component-item-class="dimple-lowcode-form-component-item-cotainer"
         :column-width="$attrs.columnWidth !== undefined ? $attrs.columnWidth : formConfig.columnWidth"
         :dragDataAdapter="dragDataAdapter"
+        :isColumn="formConfig.isColumn"
         v-bind="$attrs"
         v-on="$listeners"
       >
