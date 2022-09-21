@@ -1,6 +1,10 @@
 <template>
-  <div style="position: relative">
-    <div class="dimple-lowcode-form-item" :class="[type, isMoibile ? 'mobile' : '']" :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined }">
+  <div style="position: relative" :style="{ height: computedHeight }">
+    <div
+      class="dimple-lowcode-form-item"
+      :class="[type, isMoibile ? 'mobile' : '']"
+      :style="{ alignItems: computeAlignItems, marginBottom: computeMarginBottom ? computeMarginBottom : undefined, height: computedHeight }"
+    >
       <div v-if="computedLabelWidth !== '0px'" class="label" :class="[computeLabelPosition]" :style="{ width: computedLabelWidth }">
         <span v-if="required" class="required-icon">*</span>
         <slot name="label">
@@ -308,6 +312,7 @@ export default {
     inputFilterString: { type: Array, default: () => [] },
     bottomBorder: { type: Boolean, default: true },
     mobile: { type: Boolean, default: false },
+    height: { type: String, default: 'auto' },
   },
   data() {
     return {
@@ -326,6 +331,10 @@ export default {
         parentName = parent.$options._componentTag
       }
       return parent
+    },
+    computedHeight() {
+      if (this.height !== 'auto') return this.height
+      return undefined
     },
     isMoibile() {
       return this.type.indexOf('mobile') > -1 || this.mobile

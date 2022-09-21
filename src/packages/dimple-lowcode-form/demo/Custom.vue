@@ -35,7 +35,10 @@ export default {
               key: 'test',
               component: Test,
               renderType: 'mobile-form-item',
-              defaultInputProps: {size:'large'}
+              defaultInputProps: { size: 'large' },
+              formItemDefaultProps: { height: '100%' },
+              containerStyle: { flex: '1'},
+              style: { height: '100%' },
             },
           ],
         },
