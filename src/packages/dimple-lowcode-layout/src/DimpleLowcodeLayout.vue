@@ -21,7 +21,7 @@
           ref="render-container"
           data-id="render-container"
           :class="containerClass"
-          :style="containerStyle"
+          :style="computedContainerStyle"
           @mousemove.capture="handleComponentItemMouseMove"
           @mouseleave="currentRenderKey = null"
           @click="renderContainerClick"
@@ -120,6 +120,13 @@ export default {
         '--dimple-lowcode-layout-ghost-width': ghostStyle.width,
         '--dimple-lowcode-layout-ghost-background': ghostStyle.background,
         '--dimple-lowcode-layout-ghost-opacity': ghostStyle.opacity,
+      }
+      return res
+    },
+    computedContainerStyle() {
+      const res = this.containerStyle || {}
+      if ((!res['flex-direction'] || !res['flexDirection']) && this.columnWidth === '100%') {
+        res['flex-direction'] = 'column'
       }
       return res
     },
@@ -224,7 +231,8 @@ export default {
         },
         onUpdate: (e) => {
           const oldItem = cloneDeep(this.value[e.oldIndex])
-          this.value.splice(e.oldIndex, 1, oldItem)
+          this.value.splice(e.oldIndex, 1)
+          this.value.splice(e.newIndex, 0, oldItem)
         },
         onMove: (e) => {
           this.$emit('update:currentComponent', null)
