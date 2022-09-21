@@ -18,7 +18,7 @@
         v-if="!isMoibileTextArea"
         class="content"
         :class="[computedContentWidth !== '100%' ? computedSize : '']"
-        :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '' }"
+        :style="{ width: computedContentWidth !== '100%' ? computedContentWidth : '', flex: computedContentWidth === '100%' ? '1' : '', height: computedHeight }"
       >
         <el-input
           v-if="type === types.input"
