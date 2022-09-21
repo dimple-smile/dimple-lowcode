@@ -1,6 +1,6 @@
 <template>
   <div>
-    1
+    {{size}}
   </div>
 </template>
 

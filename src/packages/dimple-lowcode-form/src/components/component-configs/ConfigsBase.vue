@@ -26,7 +26,7 @@
         <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions"> </FormItem>
         <div style="max-height: 50vh; overflow: overlay">
           <template v-if="value.config.base.defaultValue.inputMode === 'default'">
-            <Render v-model="value" :materials="materials" />
+            <Render v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
           </template>
 
           <template v-if="value.config.base.defaultValue.inputMode === 'input'">

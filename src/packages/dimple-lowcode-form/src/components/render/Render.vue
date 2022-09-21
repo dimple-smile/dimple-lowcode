@@ -15,6 +15,7 @@ export default {
     value: {},
     materials: {},
     type: { type: String, default: 'form-item' },
+    appendProps: { type: Object, default: () => {} },
   },
   computed: {
     isFromItem() {
@@ -41,7 +42,7 @@ export default {
       })
       let defaultProps = this.value.defaultProps || {}
       if (!this.isFromItem) defaultProps = { ...defaultProps, ...(this.value.formItemDefaultProps || {}) }
-      return { ...defaultProps, ...res }
+      return { ...defaultProps, ...res, ...(this.appendProps || {}) }
     },
   },
 }

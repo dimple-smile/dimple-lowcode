@@ -35,7 +35,7 @@ const formConfig = () => {
     id: uniqueId(`${+new Date()}_`), // 表单id，不传会自动生成
     name: '', // 表单名称
     columnWidth: '100%', // 表单项的列度
-    style: { padding: '20px', background: '#eeeeee' },
+    style: { padding: '0', background: '#eeeeee' },
     formProps: {
       // 表单的配置
       labelLength: 8, // 表单下所有项目的文本宽度
