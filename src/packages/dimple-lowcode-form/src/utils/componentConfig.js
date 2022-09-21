@@ -19,6 +19,7 @@ export default () => {
       labelVisible: true,
       required: false,
     },
+    defaultInputProps: {},
     config: {
       base: {
         name: '基础配置',

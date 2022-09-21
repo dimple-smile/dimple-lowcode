@@ -106,6 +106,9 @@ import {
       valueType: valueTypes.string.value, // 数据类型，可以从valueTypes中获取支持的类型
       defaultProps: { type: 'input' }, // 组件的默认参数
 
+      // renderType: 'form-item', // 组件渲染类型，默认不需要传入可以从['form-item','mobile-form-item','custom']中选择
+      // defaultInputProps: {}, // 默认值输入使用组件录入时的参数
+
       // props对象为当前组件可配置的参数列表，每一项的编辑类型可以从editTypes中选择，每一项的值会被赋予到组件的props中
       props: {
         options: { 

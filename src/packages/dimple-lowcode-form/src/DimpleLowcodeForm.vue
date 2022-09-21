@@ -72,7 +72,7 @@
         </template>
 
         <template #render-item="{ data, index }">
-          <Render :type="data.renderType || renderType" :value="data" :materials="innerMaterials" :is-last="index === layout.length - 1" />
+          <Render v-if="isPreview ? !data.config.hidden : true" :type="data.renderType || renderType" :value="data" :materials="innerMaterials" :is-last="index === layout.length - 1" />
         </template>
 
         <template #render-item-custom="{ data, index }">
@@ -91,14 +91,16 @@
           </FormItem>
         </template>
 
-        <template #render-container-footer>
-          <div v-if="formConfig.isMoibileButtons && layout.length && formConfig.buttons.length" class="mobile-buttons">
+        <template  #render-container-footer v-if="formConfig.isMoibileButtons && layout.length && formConfig.buttons.length">
+          <div style="height: 10px;width:100%; background: #eeeeee">
+          </div>
+          <div class="mobile-buttons">
             <template v-for="(item, index) in formConfig.buttons">
               <el-button :key="index + 'button'" class="mobile-buttons-item" :class="[item.btnType]" :type="item.btnType" size="mini" @click="onOprateClick(item)">{{ item.text }}</el-button>
               <div v-if="index !== formConfig.buttons.length - 1" :key="index + 'button-padding'" style="width: 10px"></div>
             </template>
-            <div class="safearea"></div>
           </div>
+          <div class="safearea"></div>
         </template>
 
         <template #panel>
@@ -504,7 +506,6 @@ export default {
 .mobile-buttons {
   padding: 10px 16px;
   display: flex;
-  padding-bottom: 24px;
 }
 .mobile-buttons-item {
   flex: 1;
@@ -515,14 +516,21 @@ export default {
   border-radius: 4px;
   font-size: 17px;
 }
+
+.mobile-buttons-item.primary {
+  background: #006DF1;
+}
+
 .mobile-buttons-item.secondary {
   border: 1px solid #006df1;
   color: #006df1;
 }
 
 .safearea {
-  height: constant(safe-area-inset-bottom);
-  height: env(safe-area-inset-bottom);
+  height: 0px; /* 兼容 iOS < 11.2 */
+  height: constant(safe-area-inset-bottom); /* 兼容 iOS < 11.2 */
+  height: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
+  background: #fff;
 }
 </style>
 

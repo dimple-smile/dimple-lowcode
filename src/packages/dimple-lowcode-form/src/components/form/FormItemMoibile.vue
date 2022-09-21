@@ -167,7 +167,7 @@ export default {
     return {
       dayjs,
       innerValue: '',
-      primary: '#4066e2',
+      primary: '#006DF1',
       types,
       showPicker: false,
       currentDateTime: new Date(),
