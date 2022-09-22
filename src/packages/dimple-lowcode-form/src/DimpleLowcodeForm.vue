@@ -92,9 +92,8 @@
           </FormItem>
         </template>
 
-        <template  #render-container-footer v-if="formConfig.isMoibileButtons && layout.length && formConfig.buttons.length">
-          <div style="height: 10px;width:100%; background: #eeeeee">
-          </div>
+        <template #render-container-footer v-if="formConfig.isMoibileButtons && layout.length && formConfig.buttons.length">
+          <div style="height: 10px; width: 100%; background: #eeeeee"></div>
           <div class="mobile-buttons">
             <template v-for="(item, index) in formConfig.buttons">
               <el-button :key="index + 'button'" class="mobile-buttons-item" :class="[item.btnType]" :type="item.btnType" size="mini" @click="onOprateClick(item)">{{ item.text }}</el-button>
@@ -259,6 +258,7 @@ export default {
       this.innerPreview = true
       this.$emit('update:preview', true)
       Message.success('按下ESC键可以退出预览')
+      this.setDefaultValue(this.layout)
     },
     async save() {
       if (this.saveHandler) return this.saveHandler({ layout: this.layout, config: this.formConfig })
@@ -417,7 +417,17 @@ export default {
       }
     },
     setLayout(data) {
-      this.$set(this, 'layout', cloneDeep(data || []))
+      let layout = cloneDeep(data || [])
+      this.setDefaultValue(layout)
+      // this.$set(this, 'layout', layout)
+    },
+    setDefaultValue(layout) {
+      for (const item of layout) {
+        if (item?.config?.base?.defaultValue?.inputMode === 'urlParam') {
+          item.value = getQueryByKey(item?.config?.base?.defaultValue?.urlParamName)
+        }
+      }
+      this.$set(this, 'layout', layout)
     },
   },
   mounted() {
@@ -519,7 +529,7 @@ export default {
 }
 
 .mobile-buttons-item.primary {
-  background: #006DF1;
+  background: #006df1;
 }
 
 .mobile-buttons-item.secondary {
