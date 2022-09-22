@@ -21,12 +21,12 @@
     </FormItem>
     <FormItem label="隐藏该项" type="switch" v-model="value.config.hidden" tip="预览和发布时隐藏该项"></FormItem>
 
-    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible">
+    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible" destroy-on-close>
       <Form>
         <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions"> </FormItem>
         <div style="max-height: 50vh; overflow: overlay">
           <template v-if="value.config.base.defaultValue.inputMode === 'default'">
-            <Render v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
+            <Render v-if="defaultValueDialogVisible" v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
           </template>
 
           <template v-if="value.config.base.defaultValue.inputMode === 'input'">
