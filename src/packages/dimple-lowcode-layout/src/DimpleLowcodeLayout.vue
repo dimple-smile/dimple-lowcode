@@ -71,6 +71,7 @@ import Sortable from 'sortablejs'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
 import differenceBy from 'lodash/differenceBy'
+import { overlay } from "../../overlay";
 
 const defaultGhostStyle = { width: '100%', height: '40px', background: '#F0F2F5', opacity: '0.7' }
 
@@ -147,6 +148,9 @@ export default {
       },
       deep: true,
     },
+  },
+  directives: {
+    'dimple-overlay': overlay,
   },
   methods: {
     getRenderItemContainerStyle(item) {
@@ -342,6 +346,7 @@ export default {
   align-content: flex-end;
   justify-content: flex-end;
   padding: 5px;
+  padding-right: 12px;
 }
 
 .render-item-mask-default .icon {

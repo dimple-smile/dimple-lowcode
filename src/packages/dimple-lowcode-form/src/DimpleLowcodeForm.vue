@@ -144,6 +144,7 @@ import { getQueryByKey } from './utils/getQueryByKey'
 import { is } from './utils/is'
 import { validate } from './utils/validate'
 import { mergeUrl } from './utils/url'
+import { overlay } from '../../overlay/'
 
 import axios from 'axios'
 import merge from 'lodash/merge'
@@ -188,6 +189,9 @@ export default {
       drawer: false,
       innerPreview: false,
     }
+  },
+  directives: {
+    'dimple-overlay': overlay,
   },
   computed: {
     isPreview() {

@@ -30,6 +30,7 @@ import { Render } from '../render'
 import ConfigsBase from './ConfigsBase.vue'
 import ConfigsValidate from './ConfigsValidate.vue'
 import ConfigsFilter from './ConfigsFilter.vue'
+import { overlay } from '../../../../overlay'
 
 export default {
   components: { Tabs, Form, FormItem, Render, ConfigsBase, ConfigsValidate, ConfigsFilter },
@@ -41,6 +42,9 @@ export default {
     return {
       activeTab: null,
     }
+  },
+  directives: {
+    'dimple-overlay': overlay,
   },
   computed: {
     tabs() {

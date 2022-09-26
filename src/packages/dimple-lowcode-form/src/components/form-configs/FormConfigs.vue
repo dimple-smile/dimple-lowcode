@@ -21,6 +21,7 @@ import { Tabs } from '../tabs'
 import FormConfigsBase from './FormConfigsBase.vue'
 import FormConfigsButtons from './FormConfigsButtons.vue'
 import FormConfigsSave from './FormConfigsSave.vue'
+import { overlay } from '../../../../overlay';
 
 export default {
   components: { Tabs, FormConfigsBase, FormConfigsButtons, FormConfigsSave },
@@ -40,6 +41,9 @@ export default {
         { key: 'save', name: '保存配置' },
       ]
     },
+  },
+  directives: {
+    'dimple-overlay': overlay,
   },
 }
 </script>

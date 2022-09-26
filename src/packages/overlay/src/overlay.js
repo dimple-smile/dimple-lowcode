@@ -151,11 +151,11 @@ const getVisible = (options) => {
 }
 
 const isBorderBox = (options) => {
-  let res = { x: false, y: false }
+  let res = { x: true, y: true }
   if (options.borderBox !== undefined) {
     if (options.borderBox.x !== undefined || options.borderBox.y !== undefined) {
-      res.x = options.borderBox.x !== undefined ? options.borderBox.x : false
-      res.y = options.borderBox.y !== undefined ? options.borderBox.y : false
+      res.x = options.borderBox.x !== undefined ? options.borderBox.x : true
+      res.y = options.borderBox.y !== undefined ? options.borderBox.y : true
     } else {
       res.x = options.borderBox
       res.y = options.borderBox

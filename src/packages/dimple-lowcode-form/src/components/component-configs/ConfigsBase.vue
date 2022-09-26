@@ -70,6 +70,7 @@ import { FormItem } from '../form'
 import { Render } from '../render'
 import OptionsEditor from '../options-editor/OptionsEditor.vue'
 import { getQueryByKey } from '../../utils/getQueryByKey'
+import { overlay } from '../../../../overlay';
 
 export default {
   components: { ...ElComponents, FormItem, Render, OptionsEditor },
@@ -104,6 +105,9 @@ export default {
       propsItemEditorDialogVisible: false,
       currentPropsItem: null,
     }
+  },
+  directives: {
+    'dimple-overlay': overlay,
   },
   methods: {
     showPropsItemEditor(item) {
