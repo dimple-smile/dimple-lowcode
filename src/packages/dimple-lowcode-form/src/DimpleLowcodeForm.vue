@@ -105,7 +105,7 @@
 
         <template #panel>
           <slot name="panel">
-            <div class="options" v-overlay>
+            <div class="options" v-dimple-overlay>
               <ComponentConfigs v-model="currentComponent" :materials="innerMaterials" />
             </div>
           </slot>
