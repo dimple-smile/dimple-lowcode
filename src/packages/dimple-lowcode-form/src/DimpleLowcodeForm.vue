@@ -105,7 +105,7 @@
 
         <template #panel>
           <slot name="panel">
-            <div class="options">
+            <div class="options" v-overlay>
               <ComponentConfigs v-model="currentComponent" :materials="innerMaterials" />
             </div>
           </slot>
@@ -508,7 +508,7 @@ export default {
 .options {
   width: 24vw;
   height: 100%;
-  overflow: overlay;
+  overflow: auto;
   background: #fff;
   /* border-left: 1px solid #ddd;
   border-right: 1px solid #ddd; */
@@ -551,7 +551,6 @@ export default {
 }
 
 .dimple-lowcode-form-component-list {
-  overflow: overlay;
   border: 1px solid #ddd;
   box-sizing: border-box;
   border-top: none;

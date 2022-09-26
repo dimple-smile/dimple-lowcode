@@ -585,7 +585,7 @@ export default {
 .content {
   position: relative;
   word-wrap: break-word;
-  overflow: hidden;
+  overflow: auto;
 }
 .select {
   width: 100%;
