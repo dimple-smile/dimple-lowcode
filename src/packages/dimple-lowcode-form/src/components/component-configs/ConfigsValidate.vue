@@ -14,7 +14,7 @@
     </FormItem>
     <FormItem label="禁用校验" v-model="value.config.validate.disabled" type="switch"> </FormItem>
 
-    <el-dialog :title="`校验规则列表(共${value.config.validate.rules.length}条)`" :visible.sync="rulesEditorDialogVisible">
+    <el-dialog append-to-body :close-on-click-modal="false" :title="`校验规则列表(共${value.config.validate.rules.length}条)`" :visible.sync="rulesEditorDialogVisible">
       <Form class="rules-editor" :label-length="0" margin-bottom="0">
         <el-table class="table" size="mini" :data="value.config.validate.rules" :max-height="350">
           <el-table-column label="校验规则">

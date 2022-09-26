@@ -6,7 +6,7 @@
     <div class="main">
       <div v-show="!preview" class="aside" :class="asideClass">
         <slot name="component-header"></slot>
-        <div v-if="!loading" ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
+        <div v-if="!loading" v-overlay="{ borderBox: true }" ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
           <div v-for="item in componentList" class="component-item" :class="componentItemClass" :data-component-key="item[componentKey]" :key="item[componentKey]">
             <slot name="component-item" :data="item">
               {{ item.name }}
@@ -18,6 +18,7 @@
         <slot name="render-container-header"></slot>
         <div
           class="render-container"
+          v-overlay
           ref="render-container"
           data-id="render-container"
           :class="containerClass"
@@ -30,6 +31,7 @@
           <div
             v-for="(item, index) in value"
             class="render-item-container"
+            v-overlay
             :class="{ 'render-item-handle': !preview }"
             :key="item[componentKey] + item[renderKey]"
             :data-render-key="item[renderKey]"
@@ -91,7 +93,7 @@ export default {
     gutter: { type: String, default: '' },
     gutterPlacement: { type: String, default: 'right', options: ['top', 'bottom', 'left', 'right'] },
     hideMask: { type: Boolean, default: false },
-    isColumn: {type: Boolean, default: false}
+    isColumn: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -150,7 +152,7 @@ export default {
     getRenderItemContainerStyle(item) {
       const itemContainerStyle = cloneDeep(item.containerStyle || {})
       if (this.columnWidth && !itemContainerStyle.width) itemContainerStyle.width = this.columnWidth
-      if(this.computedContainerStyle['flex-direction'] !== 'column' && itemContainerStyle.flex == 1){
+      if (this.computedContainerStyle['flex-direction'] !== 'column' && itemContainerStyle.flex == 1) {
         delete itemContainerStyle.flex
       }
       return itemContainerStyle
@@ -289,7 +291,6 @@ export default {
 
 .component-list {
   flex: 1;
-  overflow: overlay;
   display: flex;
   flex-wrap: wrap;
 }
@@ -311,11 +312,10 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  overflow: overlay;
+  overflow: auto;
 }
 
 .render-item-container {
-  overflow: overlay;
   position: relative;
   height: auto;
   display: flex;
@@ -343,6 +343,7 @@ export default {
   justify-content: flex-end;
   padding: 5px;
 }
+
 .render-item-mask-default .icon {
   cursor: pointer;
 }

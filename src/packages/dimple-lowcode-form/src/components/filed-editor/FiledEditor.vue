@@ -3,7 +3,7 @@
     <div @click="visible = true">
       <slot></slot>
     </div>
-    <el-dialog :title="title" :visible.sync="visible" append-to-body width="1000px">
+    <el-dialog :close-on-click-modal="false" :title="title" :visible.sync="visible" append-to-body width="1000px">
       <Form class="dimple-lowcode-filed-editor" margin-bottom="0" :label-length="0">
         <el-table class="table" size="mini" :data="value" :max-height="350">
           <el-table-column label="字段名称">

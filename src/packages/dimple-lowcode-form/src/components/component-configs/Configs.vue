@@ -5,7 +5,7 @@
         <Tabs v-model="activeTab" :options="tabs"></Tabs>
       </div>
 
-      <div class="main" v-if="activeTab">
+      <div class="main" v-overlay v-if="activeTab">
         <Form :label-length="8">
           <!-- 组件基本配置 -->
           <ConfigsBase v-if="activeTab.key === 'base'" v-model="value" :materials="materials" />
@@ -71,7 +71,6 @@ export default {
 
 .main {
   flex: 1;
-  overflow: overlay;
   padding: 20px;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;

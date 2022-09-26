@@ -21,12 +21,12 @@
     </FormItem>
     <FormItem label="隐藏该项" type="switch" v-model="value.config.hidden" tip="预览和发布时隐藏该项"></FormItem>
 
-    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible">
+    <el-dialog v-if="value" append-to-body :close-on-click-modal="false" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible" destroy-on-close>
       <Form>
         <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions"> </FormItem>
-        <div style="max-height: 50vh; overflow: overlay">
+        <div v-overlay style="max-height: 50vh">
           <template v-if="value.config.base.defaultValue.inputMode === 'default'">
-            <Render v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
+            <Render v-if="defaultValueDialogVisible" v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
           </template>
 
           <template v-if="value.config.base.defaultValue.inputMode === 'input'">
@@ -46,7 +46,7 @@
         <el-button size="mini" type="primary" @click="defaultValueDialogVisible = false">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog v-if="value" :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`" :visible.sync="propsItemEditorDialogVisible" destroy-on-close>
+    <el-dialog v-if="value" append-to-body :close-on-click-modal="false" :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`" :visible.sync="propsItemEditorDialogVisible" destroy-on-close>
       <Form v-if="currentPropsItem">
         <template v-if="currentPropsItem.editType === 'custom'">
           <Render v-if="propsItemEditorDialogVisible" v-model="currentPropsItem" :materials="materials" />
