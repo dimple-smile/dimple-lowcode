@@ -24,7 +24,7 @@
     <el-dialog v-if="value" append-to-body :close-on-click-modal="false" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible" destroy-on-close>
       <Form>
         <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions"> </FormItem>
-        <div v-overlay style="max-height: 50vh">
+        <div v-dimple-overlay style="max-height: 50vh">
           <template v-if="value.config.base.defaultValue.inputMode === 'default'">
             <Render v-if="defaultValueDialogVisible" v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
           </template>

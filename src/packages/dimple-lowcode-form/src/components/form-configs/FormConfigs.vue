@@ -3,7 +3,7 @@
     <div class="tabs">
       <Tabs v-model="activeTab" :options="tabs"></Tabs>
     </div>
-    <div class="main" v-overlay v-if="activeTab">
+    <div class="main" v-dimple-overlay v-if="activeTab">
       <!-- 表单基本配置 -->
       <FormConfigsBase v-if="activeTab.key === 'base'" v-model="value" />
 

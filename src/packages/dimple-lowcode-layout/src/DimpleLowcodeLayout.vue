@@ -6,7 +6,7 @@
     <div class="main">
       <div v-show="!preview" class="aside" :class="asideClass">
         <slot name="component-header"></slot>
-        <div v-if="!loading" v-overlay="{ borderBox: true }" ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
+        <div v-if="!loading" v-dimple-overlay="{ borderBox: true }" ref="component-list" data-id="component-list" class="component-list" :class="componentListClass">
           <div v-for="item in componentList" class="component-item" :class="componentItemClass" :data-component-key="item[componentKey]" :key="item[componentKey]">
             <slot name="component-item" :data="item">
               {{ item.name }}
@@ -18,7 +18,7 @@
         <slot name="render-container-header"></slot>
         <div
           class="render-container"
-          v-overlay
+          v-dimple-overlay
           ref="render-container"
           data-id="render-container"
           :class="containerClass"
@@ -31,7 +31,7 @@
           <div
             v-for="(item, index) in value"
             class="render-item-container"
-            v-overlay
+            v-dimple-overlay
             :class="{ 'render-item-handle': !preview }"
             :key="item[componentKey] + item[renderKey]"
             :data-render-key="item[renderKey]"

@@ -5,7 +5,7 @@
         <Tabs v-model="activeTab" :options="tabs"></Tabs>
       </div>
 
-      <div class="main" v-overlay v-if="activeTab">
+      <div class="main" v-dimple-overlay v-if="activeTab">
         <Form :label-length="8">
           <!-- 组件基本配置 -->
           <ConfigsBase v-if="activeTab.key === 'base'" v-model="value" :materials="materials" />
