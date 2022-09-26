@@ -1,2 +1,2 @@
-import overlay from './index'
+import { overlay } from './index'
 export default overlay
