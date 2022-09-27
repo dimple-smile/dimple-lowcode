@@ -14,8 +14,8 @@ const getQuery = (str = '') => {
 }
 
 const getQueryByKey = (key) => {
-  const hashQuery = getQuery(location.hash)
-  const searchQuery = getQuery(location.search)
+  const hashQuery = getQuery(decodeURIComponent(location.hash))
+  const searchQuery = getQuery(decodeURIComponent(location.search))
   const res = { ...hashQuery, ...searchQuery }
   return res[key]
 }
