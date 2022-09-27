@@ -191,23 +191,23 @@ const reset = (el) => {
  * @returns
  */
 const overlay = async (el, binding, vnode) => {
-  await new Promise((res) => setTimeout(() => res(1), 300))
-  if (el.overlayClassId) reset(el)
+  if (!el) return
   const options = (vnode ? binding.value : binding) || {}
   const currentEl = getEl(el, options)
   if (!currentEl) return
-  if (currentEl.overlay) reset(currentEl)
-  const className = `das-overlay-${+new Date()}`
+  if (currentEl.overlayInitLoading) return
+  if (currentEl.overlayClassId) reset(currentEl)
+  const className = `dimple-overlay-${+new Date()}`
+  currentEl.overlayInitLoading = true
   await createOverlayStyle(className)
   currentEl.classList.add(className)
   const { x, y } = getVisible(options)
-  currentEl.style['z-index'] = 1
-  currentEl.style['position'] = 'relative'
   const xOverflow = isBorderBox(options).x ? 'overlay' : 'auto'
   const yOverflow = isBorderBox(options).y ? 'overlay' : 'auto'
   currentEl.style['overflow-x'] = x ? xOverflow : 'hidden'
   currentEl.style['overflow-y'] = y ? yOverflow : 'hidden'
   currentEl.overlayClassId = className
+  currentEl.overlayInitLoading = false
 }
 
 export { overlay, createOverlayStyle }
