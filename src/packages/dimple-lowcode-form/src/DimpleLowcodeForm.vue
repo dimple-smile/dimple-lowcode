@@ -428,7 +428,9 @@ export default {
     setDefaultValue(layout) {
       for (const item of layout) {
         if (item?.config?.base?.defaultValue?.inputMode === 'urlParam') {
-          item.value = getQueryByKey(item?.config?.base?.defaultValue?.urlParamName)
+          let urlParamValue = getQueryByKey(item?.config?.base?.defaultValue?.urlParamName)
+          if (urlParamValue === undefined || urlParamValue === null || urlParamValue === 'null') urlParamValue = ''
+          item.value = urlParamValue
         }
       }
       this.$set(this, 'layout', layout)
