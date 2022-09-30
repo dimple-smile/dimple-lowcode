@@ -267,7 +267,8 @@ export default {
   .text {
     padding-top: 14px;
     padding-bottom: 15px;
-    // text-align: right;
+    padding-right: 15px;
+    text-align: right;
   }
   // border: 1px solid #ddd;
   .van-cell {
