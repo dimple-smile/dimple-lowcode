@@ -32,7 +32,7 @@
         <template #input>
           <van-radio-group v-model="innerValue" :checked-color="primary" direction="horizontal" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-radio :name="item[optionsValueKey]" style="margin-bottom: 10px">
+              <van-radio :name="item[optionsValueKey]" style="margin-bottom: 10PX">
                 <div class="radio-text">{{ item[optionsLabelKey] }}</div>
               </van-radio>
             </template>
@@ -45,7 +45,7 @@
         <template #input>
           <van-checkbox-group v-model="innerValue" :checked-color="primary" direction="horizontal" v-bind="$attrs" @change="change">
             <template v-for="item in options">
-              <van-checkbox :name="item[optionsValueKey]" shape="square" style="margin-bottom: 10px">
+              <van-checkbox :name="item[optionsValueKey]" shape="square" style="margin-bottom: 10PX">
                 <div class="checkbox-text">{{ item[optionsLabelKey] }}</div>
               </van-checkbox>
             </template>
@@ -265,51 +265,51 @@ export default {
   width: 100%;
   box-sizing: border-box;
   .text {
-    padding-top: 14px;
-    padding-bottom: 15px;
-    padding-right: 15px;
+    padding-top: 14PX;
+    padding-bottom: 15PX;
+    padding-right: 15PX;
     text-align: right;
   }
-  // border: 1px solid #ddd;
+  // border: 1PX solid #ddd;
   .van-cell {
-    padding: 0px;
+    padding: 0PX;
     .van-cell__value {
       .van-field__body {
-        padding-right: 15px;
-        padding-left: 15px;
+        padding-right: 15PX;
+        padding-left: 15PX;
 
         input {
           // box-sizing: border-box;
-          height: 48px;
-          line-height: 48px;
-          // border: 1px solid #dcdfe6;
-          // padding: 0 18px;
-          // border-radius: 4px;
+          height: 48PX;
+          line-height: 48PX;
+          // border: 1PX solid #dcdfe6;
+          // padding: 0 18PX;
+          // border-radius: 4PX;
           text-align: right;
         }
         textarea {
           // box-sizing: border-box;
-          // border: 1px solid #dcdfe6;
-          // padding: 4px 18px;
-          // border-radius: 4px;
-          padding-top: 15px;
-          padding-bottom: 15px;
+          // border: 1PX solid #dcdfe6;
+          // padding: 4PX 18PX;
+          // border-radius: 4PX;
+          padding-top: 15PX;
+          padding-bottom: 15PX;
         }
       }
     }
   }
   .van-field__word-limit {
-    margin-bottom: 5px;
-    margin-right: 15px;
+    margin-bottom: 5PX;
+    margin-right: 15PX;
     color: #ccc;
   }
   .van-cell__right-icon {
-    line-height: 48px;
-    margin-right: 15px;
+    line-height: 48PX;
+    margin-right: 15PX;
   }
 
   .radio {
-    padding-top: 14px;
+    padding-top: 14PX;
     .van-field__control {
       justify-content: flex-end;
     }
@@ -328,13 +328,13 @@ export default {
   .time {
     .van-cell__value {
       .van-field__body {
-        padding-right: 0px;
+        padding-right: 0PX;
       }
     }
   }
 
   .checkbox-group {
-    padding-top: 14px;
+    padding-top: 14PX;
     .van-field__control {
       justify-content: flex-end;
     }

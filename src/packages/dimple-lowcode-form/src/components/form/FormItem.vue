@@ -523,7 +523,8 @@ export default {
 
 .dimple-lowcode-form-item.mobile {
   background: #fff;
-  min-height: 48px;
+  min-height: 48PX;
+  font-size: 14PX !important;
 }
 
 .label {
@@ -538,8 +539,8 @@ export default {
 }
 
 .dimple-lowcode-form-item.mobile .label {
-  padding-left: 15px;
-  height: 48px;
+  padding-left: 15PX;
+  height: 48PX;
 }
 
 .label.right {
@@ -551,10 +552,10 @@ export default {
 
 .mobile-border-bottom {
   position: absolute;
-  left: 15px;
+  left: 15PX;
   right: 0;
   bottom: 0;
-  height: 1px;
+  height: 1PX;
   background: #e5e5e5;
   transform: scaleY(0.5);
   /* background: #ebedf0; */
@@ -562,10 +563,10 @@ export default {
 
 .mobile-textare-border {
   position: absolute;
-  left: 15px;
-  top: 47px;
+  left: 15PX;
+  top: 47PX;
   right: 0;
-  height: 1px;
+  height: 1PX;
   background: #e5e5e5;
   transform: scaleY(0.5);
   /* background: #ebedf0; */
