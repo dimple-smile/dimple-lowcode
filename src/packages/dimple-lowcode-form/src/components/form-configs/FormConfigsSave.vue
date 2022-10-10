@@ -17,12 +17,11 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { Form, FormItem } from '../form'
 import { FiledEditor } from '../filed-editor'
 
 export default {
-  components: { ...ElComponents, Form, FormItem, FiledEditor },
+  components: {  Form, FormItem, FiledEditor },
   props: {
     value: {},
   },

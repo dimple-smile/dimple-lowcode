@@ -42,11 +42,10 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { Form, FormItem } from '../form'
 import { requestParamModeTypes, requestParamItem } from '../../utils/formConfig'
 export default {
-  components: { ...ElComponents, Form, FormItem },
+  components: { Form, FormItem },
   props: {
     value: { type: Array, default: () => [] },
     title: {},

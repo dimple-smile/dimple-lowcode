@@ -1,6 +1,7 @@
 import uniqueId from 'lodash/uniqueId'
 import { valueTypes } from './valueTypes'
-export default () => {
+
+const componentConfig = () => {
   return {
     id: uniqueId(`${+new Date()}_`),
     filedName: uniqueId(`${+new Date()}_`),
@@ -44,3 +45,7 @@ export default () => {
     },
   }
 }
+
+export { componentConfig }
+
+export default componentConfig

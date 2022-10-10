@@ -54,14 +54,13 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { TitleDividev } from '../title-divider'
 import { Form, FormItem } from '../form'
 import { FiledEditor } from '../filed-editor'
 import { formButtonItem, buttonOperateTypes } from '../../utils/formConfig'
 
 export default {
-  components: { ...ElComponents, TitleDividev, Form, FormItem, FiledEditor },
+  components: { TitleDividev, Form, FormItem, FiledEditor },
   props: {
     value: {},
   },

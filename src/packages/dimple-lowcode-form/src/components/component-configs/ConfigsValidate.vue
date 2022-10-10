@@ -53,13 +53,12 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { Form, FormItem } from '../form'
 import { valueTypes } from '../../utils/valueTypes'
 import { validateRegExps } from '../../utils/validateRegExps'
 
 export default {
-  components: { ...ElComponents, Form, FormItem },
+  components: { Form, FormItem },
   props: {
     value: {},
     materials: {},

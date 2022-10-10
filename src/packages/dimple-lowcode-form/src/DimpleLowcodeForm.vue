@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import { ElComponents, Loading, Message } from './components/element-ui'
+import { Loading, Message } from 'element-ui'
 
 import { DimpleLowcodeLayout } from '../../dimple-lowcode-layout'
 import { Tabs } from './components/tabs'
@@ -157,7 +157,6 @@ const ajax = axios.create()
 export default {
   name: 'DimpleLowcodeForm',
   components: {
-    ...ElComponents,
     DimpleLowcodeLayout,
     Tabs,
     TitleDividev,

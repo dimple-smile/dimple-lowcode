@@ -257,7 +257,6 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { resizeObserver } from '../../utils/resizeObserver'
 import FormItemMoibile from './FormItemMoibile.vue'
 
@@ -282,7 +281,6 @@ const types = {
 export default {
   name: 'FormItem',
   components: {
-    ...ElComponents,
     FormItemMoibile,
   },
   props: {
