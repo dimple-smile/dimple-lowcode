@@ -541,6 +541,7 @@ export default {
 .dimple-lowcode-form-item.mobile .label {
   padding-left: 15PX;
   height: 48PX;
+  font-size: 14PX !important;
 }
 
 .label.right {
