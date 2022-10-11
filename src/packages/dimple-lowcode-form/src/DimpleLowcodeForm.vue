@@ -520,17 +520,17 @@ export default {
 }
 
 .mobile-buttons {
-  padding: 10px 16px;
+  padding: 10PX 16PX;
   display: flex;
 }
 .mobile-buttons-item {
   flex: 1;
-  height: 44px;
-  line-height: 44px;
+  height: 44PX;
+  line-height: 44PX;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 4px;
-  font-size: 17px;
+  border-radius: 4PX;
+  font-size: 17PX;
 }
 
 .mobile-buttons-item.primary {
