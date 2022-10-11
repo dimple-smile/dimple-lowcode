@@ -536,17 +536,17 @@ export default {
 }
 
 .mobile-buttons {
-  padding: 10px 16px;
+  padding: 10PX 16PX !important;
   display: flex;
 }
 .mobile-buttons-item {
   flex: 1;
-  height: 44px;
-  line-height: 44px;
+  height: 44PX !important;
+  line-height: 44PX !important;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 4px;
-  font-size: 17px;
+  border-radius: 4PX !important;
+  font-size: 17PX !important;
 }
 
 .mobile-buttons-item.primary {
@@ -615,30 +615,30 @@ export default {
 
 <style>
 .dimple-lowcode-form-message {
-  min-width: 300px !important;
-  border-radius: 4px !important;
-  top: 20px !important;
-  padding: 15px 15px 15px 20px !important;
+  min-width: 300PX !important;
+  border-radius: 4PX !important;
+  top: 20PX !important;
+  padding: 15PX 15PX 15PX 20PX !important;
 }
 
 .dimple-lowcode-form-message.is-closable .el-message__content {
-  padding-right: 16px !important;
+  padding-right: 16PX !important;
 }
 
 .dimple-lowcode-form-message .el-message__icon {
-  margin-right: 10px !important;
+  margin-right: 10PX !important;
 }
 
 .dimple-lowcode-form-message .el-message__content {
-  font-size: 14px !important;
+  font-size: 14PX !important;
 }
 
 .dimple-lowcode-form-message .el-message__closeBtn {
-  right: 15px !important;
-  font-size: 16px !important;
+  right: 15PX !important;
+  font-size: 16PX !important;
 }
 
 .dimple-lowcode-form-message .el-message__icon {
-  font-size: 16px !important;
+  font-size: 16PX !important;
 }
 </style>
