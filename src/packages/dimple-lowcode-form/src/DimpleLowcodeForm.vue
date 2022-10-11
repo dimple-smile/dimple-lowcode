@@ -161,7 +161,7 @@ const customMessage = (type, message) => {
     // duration: 0,
     // dangerouslyUseHTMLString: true,
     // message: `<span style="color: red">${message}</span>`,
-    customClass: 'dimple-lowcode-form-message'
+    customClass: 'dimple-lowcode-form-message',
   })
 }
 const _message = {
@@ -614,29 +614,31 @@ export default {
 </style>
 
 <style>
-
 .dimple-lowcode-form-message {
-  min-width: 300PX !important;
-  border-radius: 4PX !important;
-  top: 20PX !important;
-  padding: 15PX 15PX 15PX 20PX !important;
+  min-width: 300px !important;
+  border-radius: 4px !important;
+  top: 20px !important;
+  padding: 15px 15px 15px 20px !important;
 }
 
-
 .dimple-lowcode-form-message.is-closable .el-message__content {
-  padding-right: 16PX !important
+  padding-right: 16px !important;
 }
 
 .dimple-lowcode-form-message .el-message__icon {
-  margin-right: 10PX  !important
+  margin-right: 10px !important;
 }
 
 .dimple-lowcode-form-message .el-message__content {
-  font-size: 14PX !important;
+  font-size: 14px !important;
 }
 
 .dimple-lowcode-form-message .el-message__closeBtn {
-  right: 15PX !important;
-  font-size: 16PX !important;
+  right: 15px !important;
+  font-size: 16px !important;
+}
+
+.dimple-lowcode-form-message .el-message__icon {
+  font-size: 16px !important;
 }
 </style>
