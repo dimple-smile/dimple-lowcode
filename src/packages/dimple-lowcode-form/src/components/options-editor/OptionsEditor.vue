@@ -24,10 +24,7 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
-
 export default {
-  components: { ...ElComponents },
   props: {
     value: {},
   },

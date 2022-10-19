@@ -1,7 +1,8 @@
 <template>
   <div class="dimple-lowcode-form-buttons">
-    <div style="margin-bottom: 20px">
-      <el-switch v-model="value.isMoibileButtons" active-text="使用移动端按钮样式"> </el-switch>
+    <div class="is-mobile">
+      <el-switch v-model="value.isMoibileButtons" style="width: auto;"></el-switch>
+      <div class="label">使用移动端按钮样式</div>
     </div>
     <div class="title">
       <el-button type="primary" icon="el-icon-plus" size="mini" @click="add">添加操作按钮</el-button>
@@ -54,14 +55,13 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
 import { TitleDividev } from '../title-divider'
 import { Form, FormItem } from '../form'
 import { FiledEditor } from '../filed-editor'
 import { formButtonItem, buttonOperateTypes } from '../../utils/formConfig'
 
 export default {
-  components: { ...ElComponents, TitleDividev, Form, FormItem, FiledEditor },
+  components: { TitleDividev, Form, FormItem, FiledEditor },
   props: {
     value: {},
   },
@@ -92,6 +92,19 @@ export default {
 .dimple-lowcode-form-buttons {
   padding-right: 10px;
 }
+
+.dimple-lowcode-form-buttons .is-mobile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.dimple-lowcode-form-buttons .is-mobile .label {
+  margin-left: 10px;
+}
+
+/* .dimple-lowcode-form-buttons >>> .el-switch__core{
+  width: 40px !important;
+} */
 .dimple-lowcode-form-buttons .title {
   padding: 0;
   margin-bottom: 20px;

@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import { ElComponents, Loading, Message } from './components/element-ui'
+import { Loading, Message } from 'element-ui'
 
 import { DimpleLowcodeLayout } from '../../dimple-lowcode-layout'
 import { Tabs } from './components/tabs'
@@ -154,10 +154,25 @@ import cloneDeep from 'lodash/cloneDeep'
 import defaultComponentConfig from './utils/componentConfig'
 const ajax = axios.create()
 
+const customMessage = (type, message) => {
+  return Message({
+    type,
+    message,
+    // duration: 0,
+    // dangerouslyUseHTMLString: true,
+    // message: `<span style="color: red">${message}</span>`,
+    customClass: 'dimple-lowcode-form-message',
+  })
+}
+const _message = {
+  success: (m) => customMessage('success', m),
+  warning: (m) => customMessage('warning', m),
+  error: (m) => customMessage('error', m),
+}
+
 export default {
   name: 'DimpleLowcodeForm',
   components: {
-    ...ElComponents,
     DimpleLowcodeLayout,
     Tabs,
     TitleDividev,
@@ -261,7 +276,7 @@ export default {
     toPreview() {
       this.innerPreview = true
       this.$emit('update:preview', true)
-      Message.success('按下ESC键可以退出预览')
+      _message.success('按下ESC键可以退出预览')
       this.setDefaultValue(this.layout)
     },
     async save() {
@@ -272,13 +287,13 @@ export default {
       let successMsg = ''
       let errorMsg = ''
       const formConfig = this.formConfig
-      if (!formConfig.name) return Message.error('表单名称必填')
+      if (!formConfig.name) return _message.error('表单名称必填')
       try {
         const config = this.formConfig.save
         api = config.api
         successMsg = config.successMsg
         errorMsg = config.errorMsg
-        if (!is.http(api)) return Message.warning('保存的接口地址不符合网络接口格式，无法发起保存操作')
+        if (!is.http(api)) return _message.warning('保存的接口地址不符合网络接口格式，无法发起保存操作')
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
         }
@@ -290,7 +305,7 @@ export default {
         body.config = this.formConfig
       } catch (error) {
         console.error('保存配置填写错误', error)
-        return Message.error('保存配置填写错误')
+        return _message.error('保存配置填写错误')
       }
       const loadingInstance = Loading.service({ fullscreen: true })
       let req = { url: api, method: 'post', headers, data: body }
@@ -299,15 +314,15 @@ export default {
         if (typeof req !== 'object') return loadingInstance.close()
       } catch (error) {
         console.error('自定义保存配置填写错误', error)
-        return Message.error('保存配置填写错误')
+        return _message.error('保存配置填写错误')
       }
       ajax(req)
         .then((res) => {
-          Message.success(successMsg || '保存成功')
+          _message.success(successMsg || '保存成功')
           this.$emit('afterSave', res)
         })
         .catch((err) => {
-          Message.error(errorMsg || '保存失败')
+          _message.error(errorMsg || '保存失败')
           this.$emit('afterSaveError', err)
         })
         .finally(() => {
@@ -338,11 +353,11 @@ export default {
         isRequest = operateType === 'request'
         body.id = this.formConfig.id
         if (isLink) {
-          if (!is.http(link)) return Message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+          if (!is.http(link)) return _message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
           window.location.href = mergeUrl(link, window.location.href)
           return
         }
-        if (isRequest && !is.http(api)) return Message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作')
+        if (isRequest && !is.http(api)) return _message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作')
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
         }
@@ -388,11 +403,11 @@ export default {
           }
           formData[item.filedName] = item.value
         }
-        if (validateMsg) return Message.error(validateMsg)
+        if (validateMsg) return _message.error(validateMsg)
         body[config.formDataFiledName || 'form'] = formData
       } catch (error) {
         console.error('按钮配置填写错误', error)
-        return Message.error('按钮配置填写错误')
+        return _message.error('按钮配置填写错误')
       }
 
       if (isRequest) {
@@ -404,15 +419,15 @@ export default {
           if (typeof req !== 'object') return loadingInstance.close()
         } catch (error) {
           console.error('自定义按钮配置填写错误', error)
-          return Message.error('自定义按钮配置填写错误')
+          return _message.error('自定义按钮配置填写错误')
         }
         ajax(req)
           .then((res) => {
-            Message.success(successMsg || '发送成功')
+            _message.success(successMsg || '发送成功')
             this.$emit('afterBtnRequest', res)
           })
           .catch((err) => {
-            Message.error(errorMsg || '发送失败')
+            _message.error(errorMsg || '发送失败')
             this.$emit('afterBtnRequestError', err)
           })
           .finally(() => {
@@ -521,17 +536,17 @@ export default {
 }
 
 .mobile-buttons {
-  padding: 10px 16px;
+  padding: 10PX 16PX !important;
   display: flex;
 }
 .mobile-buttons-item {
   flex: 1;
-  height: 44px;
-  line-height: 44px;
+  height: 44PX !important;
+  line-height: 44PX !important;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 4px;
-  font-size: 17px;
+  border-radius: 4PX !important;
+  font-size: 17PX !important;
 }
 
 .mobile-buttons-item.primary {
@@ -595,5 +610,35 @@ export default {
 
 .dimple-lowcode-form-component-item:hover {
   box-shadow: 0 6px 16px 0 rgb(0 0 0 / 15%);
+}
+</style>
+
+<style>
+.dimple-lowcode-form-message {
+  min-width: 300PX !important;
+  border-radius: 4PX !important;
+  top: 20PX !important;
+  padding: 15PX 15PX 15PX 20PX !important;
+}
+
+.dimple-lowcode-form-message.is-closable .el-message__content {
+  padding-right: 16PX !important;
+}
+
+.dimple-lowcode-form-message .el-message__icon {
+  margin-right: 10PX !important;
+}
+
+.dimple-lowcode-form-message .el-message__content {
+  font-size: 14PX !important;
+}
+
+.dimple-lowcode-form-message .el-message__closeBtn {
+  right: 15PX !important;
+  font-size: 16PX !important;
+}
+
+.dimple-lowcode-form-message .el-message__icon {
+  font-size: 16PX !important;
 }
 </style>

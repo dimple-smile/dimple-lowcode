@@ -17,11 +17,10 @@
 
 <script>
 import { DimpleLowcodeForm } from '../index'
-import { ElComponents } from '../src/components/element-ui'
 import Test from './Test.vue'
 
 export default {
-  components: { ...ElComponents, DimpleLowcodeForm },
+  components: { DimpleLowcodeForm },
   data() {
     return {
       data: [],

@@ -7,10 +7,7 @@
 </template>
 
 <script>
-import { ElComponents } from '../element-ui'
-
 export default {
-  components: {  ...ElComponents },
   props: {
     value: { type: Object, default: null },
     options: { type: Array, default: () => [] },
