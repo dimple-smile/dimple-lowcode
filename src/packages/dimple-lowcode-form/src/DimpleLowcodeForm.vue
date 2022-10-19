@@ -166,8 +166,8 @@ const customMessage = (type, message) => {
 }
 const _message = {
   success: (m) => customMessage('success', m),
-  warning: (m) => customMessage('success', m),
-  error: (m) => customMessage('success', m),
+  warning: (m) => customMessage('warning', m),
+  error: (m) => customMessage('error', m),
 }
 
 export default {
