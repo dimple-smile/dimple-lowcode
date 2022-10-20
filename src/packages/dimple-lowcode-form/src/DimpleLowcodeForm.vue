@@ -318,12 +318,12 @@ export default {
       }
       ajax(req)
         .then((res) => {
-          _message.success(successMsg || '保存成功')
-          this.$emit('afterSave', res)
+          if(successMsg) _message.success(successMsg || '保存成功')
+          this.$emit('afterSave', res, { _message, config: this.formConfig.save })
         })
         .catch((err) => {
-          _message.error(errorMsg || '保存失败')
-          this.$emit('afterSaveError', err)
+          if(err) _message.error(errorMsg || '保存失败')
+          this.$emit('afterSaveError', err, { _message, config: this.formConfig.save })
         })
         .finally(() => {
           loadingInstance.close()
@@ -423,12 +423,12 @@ export default {
         }
         ajax(req)
           .then((res) => {
-            _message.success(successMsg || '发送成功')
-            this.$emit('afterBtnRequest', res)
+            if (successMsg) _message.success(successMsg || '发送成功')
+            this.$emit('afterBtnRequest', res, { _message, config })
           })
           .catch((err) => {
-            _message.error(errorMsg || '发送失败')
-            this.$emit('afterBtnRequestError', err)
+            if (errorMsg) _message.error(errorMsg || '发送失败')
+            this.$emit('afterBtnRequestError', err, { _message, config })
           })
           .finally(() => {
             loadingInstance.close()
