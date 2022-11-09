@@ -84,6 +84,10 @@
           <slot name="render-item-mask" :data="data" :index="index"></slot>
         </template>
 
+        <template #render-header>
+          <div v-if="formConfig.isMoibileButtons" style="height: 5px;width: 100%;"></div>
+        </template>
+
         <template #render-footer>
           <FormItem v-if="!formConfig.isMoibileButtons && layout.length && formConfig.buttons.length">
             <template v-for="item in formConfig.buttons">
@@ -154,20 +158,20 @@ import cloneDeep from 'lodash/cloneDeep'
 import defaultComponentConfig from './utils/componentConfig'
 const ajax = axios.create()
 
-const customMessage = (type, message) => {
+const customMessage = (type, message, isToast) => {
   return Message({
     type,
-    message,
+    message: message,
     // duration: 0,
     // dangerouslyUseHTMLString: true,
     // message: `<span style="color: red">${message}</span>`,
-    customClass: 'dimple-lowcode-form-message',
+    customClass: `dimple-lowcode-form-message ${ isToast ? 'toast' : '' }`,
   })
 }
 const _message = {
-  success: (m) => customMessage('success', m),
-  warning: (m) => customMessage('warning', m),
-  error: (m) => customMessage('error', m),
+  success: (m, isToast) => customMessage('success', m, isToast),
+  warning: (m, isToast) => customMessage('warning', m, isToast),
+  error: (m, isToast) => customMessage('error', m, isToast),
 }
 
 export default {
@@ -217,6 +221,9 @@ export default {
     innerMaterials() {
       return [...this.systemMaterials, ...this.materials]
     },
+    isMobile() {
+      return this.formConfig.isMoibileButtons
+    }
   },
   watch: {
     data: {
@@ -276,7 +283,7 @@ export default {
     toPreview() {
       this.innerPreview = true
       this.$emit('update:preview', true)
-      _message.success('按下ESC键可以退出预览')
+      _message.success('按下ESC键可以退出预览', this.isMobile)
       this.setDefaultValue(this.layout)
     },
     async save() {
@@ -287,13 +294,13 @@ export default {
       let successMsg = ''
       let errorMsg = ''
       const formConfig = this.formConfig
-      if (!formConfig.name) return _message.error('表单名称必填')
+      if (!formConfig.name) return _message.error('表单名称必填', this.isMobile)
       try {
         const config = this.formConfig.save
         api = config.api
         successMsg = config.successMsg
         errorMsg = config.errorMsg
-        if (!is.http(api)) return _message.warning('保存的接口地址不符合网络接口格式，无法发起保存操作')
+        if (!is.http(api)) return _message.warning('保存的接口地址不符合网络接口格式，无法发起保存操作', this.isMobile)
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
         }
@@ -305,7 +312,7 @@ export default {
         body.config = this.formConfig
       } catch (error) {
         console.error('保存配置填写错误', error)
-        return _message.error('保存配置填写错误')
+        return _message.error('保存配置填写错误', this.isMobile)
       }
       const loadingInstance = Loading.service({ fullscreen: true })
       let req = { url: api, method: 'post', headers, data: body }
@@ -314,16 +321,16 @@ export default {
         if (typeof req !== 'object') return loadingInstance.close()
       } catch (error) {
         console.error('自定义保存配置填写错误', error)
-        return _message.error('保存配置填写错误')
+        return _message.error('保存配置填写错误', this.isMobile)
       }
       ajax(req)
         .then((res) => {
-          _message.success(successMsg || '保存成功')
-          this.$emit('afterSave', res)
+          if(successMsg) _message.success(successMsg || '保存成功', this.isMobile)
+          this.$emit('afterSave', res, { _message, config: this.formConfig.save })
         })
         .catch((err) => {
-          _message.error(errorMsg || '保存失败')
-          this.$emit('afterSaveError', err)
+          if(errorMsg) _message.error(errorMsg || '保存失败', this.isMobile)
+          this.$emit('afterSaveError', err, { _message, config: this.formConfig.save })
         })
         .finally(() => {
           loadingInstance.close()
@@ -353,11 +360,11 @@ export default {
         isRequest = operateType === 'request'
         body.id = this.formConfig.id
         if (isLink) {
-          if (!is.http(link)) return _message.warning('跳转地址不符合网络地址格式，无法执行跳转操作')
+          if (!is.http(link)) return _message.warning('跳转地址不符合网络地址格式，无法执行跳转操作', this.isMobile)
           window.location.href = mergeUrl(link, window.location.href)
           return
         }
-        if (isRequest && !is.http(api)) return _message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作')
+        if (isRequest && !is.http(api)) return _message.warning('请求的接口地址不符合网络接口格式，无法发起网络请求操作', this.isMobile)
         for (const item of config.headers) {
           headers[item.name] = item.mode === 'urlParam' ? getQueryByKey(item.name) : item.value
         }
@@ -403,11 +410,11 @@ export default {
           }
           formData[item.filedName] = item.value
         }
-        if (validateMsg) return _message.error(validateMsg)
+        if (validateMsg) return _message.error(validateMsg, this.isMobile)
         body[config.formDataFiledName || 'form'] = formData
       } catch (error) {
         console.error('按钮配置填写错误', error)
-        return _message.error('按钮配置填写错误')
+        return _message.error('按钮配置填写错误', this.isMobile)
       }
 
       if (isRequest) {
@@ -419,16 +426,16 @@ export default {
           if (typeof req !== 'object') return loadingInstance.close()
         } catch (error) {
           console.error('自定义按钮配置填写错误', error)
-          return _message.error('自定义按钮配置填写错误')
+          return _message.error('自定义按钮配置填写错误', this.isMobile)
         }
         ajax(req)
           .then((res) => {
-            _message.success(successMsg || '发送成功')
-            this.$emit('afterBtnRequest', res)
+            if (successMsg) _message.success(successMsg || '发送成功', this.isMobile)
+            this.$emit('afterBtnRequest', res, { _message, config })
           })
           .catch((err) => {
-            _message.error(errorMsg || '发送失败')
-            this.$emit('afterBtnRequestError', err)
+            if (errorMsg) _message.error(errorMsg || '发送失败', this.isMobile)
+            this.$emit('afterBtnRequestError', err, { _message, config })
           })
           .finally(() => {
             loadingInstance.close()
@@ -640,5 +647,25 @@ export default {
 
 .dimple-lowcode-form-message .el-message__icon {
   font-size: 16PX !important;
+}
+.dimple-lowcode-form-message.toast{
+  top: 48vh !important;
+	background-color: #585858 !important;
+  min-width: 0PX !important;
+  border: none !important;
+  padding: 9PX 20PX !important;
+  display: block !important;
+  border-radius: 4PX !important;
+}
+
+.dimple-lowcode-form-message.toast .el-message__icon {
+  display: none;
+}
+
+.dimple-lowcode-form-message.toast .el-message__content{
+  color: #fff !important;
+  display: inline;
+  word-break: break-word;
+  word-wrap: break-word;
 }
 </style>

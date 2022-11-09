@@ -45,7 +45,7 @@ const formConfig = () => {
     },
     isMoibileButtons: true, // 是否使用移动端按钮
     buttons: [], // 表单的操作按钮组，可以配置多个，每一项都需要满足formButtonItem的配置
-    save: { ...formButtonItem, text: '保存', btnType: 'primary' }, // 表单保存配置，和按钮配置formButtonItem一样
+    save: { ...formButtonItem, successMsg: '保存成功', errorMsg: '保存失败', text: '保存', btnType: 'primary' }, // 表单保存配置，和按钮配置formButtonItem一样
   }
 }
 
