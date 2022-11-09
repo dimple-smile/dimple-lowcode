@@ -56,6 +56,7 @@
 
     <template v-if="type === types['select']">
       <van-field
+        class="select"
         readonly
         clickable
         name="picker"
@@ -292,14 +293,14 @@ export default {
           // border: 1PX solid #dcdfe6;
           // padding: 4PX 18PX;
           // border-radius: 4PX;
-          padding-top: 15PX;
+          padding-top: 8PX;
           padding-bottom: 15PX;
         }
       }
     }
   }
   .van-field__word-limit {
-    margin-bottom: 5PX;
+    margin-bottom: 8PX;
     margin-right: 15PX;
     color: #ccc;
   }
@@ -326,6 +327,14 @@ export default {
   }
 
   .time {
+    .van-cell__value {
+      .van-field__body {
+        padding-right: 0PX;
+      }
+    }
+  }
+
+  .select {
     .van-cell__value {
       .van-field__body {
         padding-right: 0PX;

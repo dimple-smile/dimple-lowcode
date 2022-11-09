@@ -12,6 +12,8 @@
           <el-button style="width: 100%" size="mini" icon="el-icon-edit">{{value.save.body.length}}个字段</el-button>
         </FiledEditor>
       </FormItem>
+      <FormItem label="保存成功提示" type="input" v-model="value.save.successMsg"></FormItem>
+      <FormItem label="报错失败提示" type="input" v-model="value.save.errorMsg"></FormItem>
     </Form>
   </div>
 </template>
