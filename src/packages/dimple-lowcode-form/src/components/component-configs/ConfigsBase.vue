@@ -14,7 +14,7 @@
     </FormItem>
     <FormItem v-if="Object.keys(value.props).length" label="组件参数" align-items="flex-start">
       <template v-for="(item, key) in value.props">
-        <div style="margin-bottom: 10px;">
+        <div style="margin-bottom: 10px">
           <el-button style="width: 100%; magirn-botton: 10px" @click="showPropsItemEditor(item)" size="mini" icon="el-icon-edit">{{ item.label }}</el-button>
         </div>
       </template>
@@ -23,7 +23,7 @@
 
     <el-dialog v-if="value" append-to-body :close-on-click-modal="false" :title="`${value.formItemDefaultProps.label}-默认值录入`" :visible.sync="defaultValueDialogVisible" destroy-on-close>
       <Form>
-        <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions"> </FormItem>
+        <FormItem label="录入模式" v-model="value.config.base.defaultValue.inputMode" type="select" :options="defaultValueInputOptions" @change="handleInputModeChange"> </FormItem>
         <div v-dimple-overlay style="max-height: 50vh">
           <template v-if="value.config.base.defaultValue.inputMode === 'default'">
             <Render v-if="defaultValueDialogVisible" v-model="value" :materials="materials" :append-props="value.defaultInputProps || {}" />
@@ -46,7 +46,14 @@
         <el-button size="mini" type="primary" @click="defaultValueDialogVisible = false">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog v-if="value" append-to-body :close-on-click-modal="false" :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`" :visible.sync="propsItemEditorDialogVisible" destroy-on-close>
+    <el-dialog
+      v-if="value"
+      append-to-body
+      :close-on-click-modal="false"
+      :title="`${value.formItemDefaultProps.label}-${currentPropsItem && currentPropsItem.label}-参数编辑`"
+      :visible.sync="propsItemEditorDialogVisible"
+      destroy-on-close
+    >
       <Form v-if="currentPropsItem">
         <template v-if="currentPropsItem.editType === 'custom'">
           <Render v-if="propsItemEditorDialogVisible" v-model="currentPropsItem" :materials="materials" />
@@ -69,7 +76,7 @@ import { FormItem } from '../form'
 import { Render } from '../render'
 import OptionsEditor from '../options-editor/OptionsEditor.vue'
 import { getQueryByKey } from '../../utils/getQueryByKey'
-import { overlay } from '../../../../overlay';
+import { overlay } from '../../../../overlay'
 
 export default {
   components: { FormItem, Render, OptionsEditor },
@@ -114,6 +121,9 @@ export default {
       this.currentPropsItem = item
     },
     getQueryByKey,
+    handleInputModeChange() {
+      this.value.value = ''
+    },
   },
 }
 </script>
