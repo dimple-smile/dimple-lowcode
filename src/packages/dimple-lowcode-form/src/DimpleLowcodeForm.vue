@@ -294,7 +294,6 @@ export default {
       let successMsg = ''
       let errorMsg = ''
       const formConfig = this.formConfig
-      if (!formConfig.name) return _message.error('表单名称必填', this.isMobile)
       try {
         const config = this.formConfig.save
         api = config.api
@@ -318,6 +317,7 @@ export default {
       let req = { url: api, method: 'post', headers, data: body }
       try {
         if (this.saveRequestConfig) req = await this.saveRequestConfig(req)
+        // if (!formConfig.name) return _message.error('表单名称必填', this.isMobile)
         if (typeof req !== 'object') return loadingInstance.close()
       } catch (error) {
         console.error('自定义保存配置填写错误', error)

@@ -22,7 +22,7 @@ const formButtonItem = {
   btnType: 'default', // 按钮的类型：primary / success / warning / danger / info / text
   operateType: buttonOperateTypes.request.value, // 按钮的操作类型，见buttonOperateTypes
   api: '', // 按钮操作类型为网络请求时，请求的接口地址
-  formDataFiledName: 'form', // 发起网络请求时表单数据的字段名
+  formDataFiledName: 'data', // 发起网络请求时表单数据的字段名
   successMsg: '发送成功', // 发起网络请求时发送成功的提示信息
   errorMsg: '发送失败', // 发起网络请求时发送失败的提示信息
   headers: [], // requestParamItem[]
