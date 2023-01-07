@@ -71,7 +71,7 @@ import Sortable from 'sortablejs'
 import uniqueId from 'lodash/uniqueId'
 import cloneDeep from 'lodash/cloneDeep'
 import differenceBy from 'lodash/differenceBy'
-import { overlay } from "../../overlay";
+import { overlay } from '../../overlay'
 
 const defaultGhostStyle = { width: '100%', height: '40px', background: '#F0F2F5', opacity: '0.7' }
 
@@ -241,9 +241,11 @@ export default {
           this.currentRenderKey = this.dragData[this.renderKey]
         },
         onUpdate: (e) => {
-          const oldItem = cloneDeep(this.value[e.oldIndex])
-          this.value.splice(e.oldIndex, 1)
-          this.value.splice(e.newIndex, 0, oldItem)
+          const oldIndex = e.oldIndex - 1
+          const newIndex = e.newIndex - 1
+          const oldItem = cloneDeep(this.value[oldIndex])
+          this.value.splice(oldIndex, 1)
+          this.value.splice(newIndex, 0, oldItem)
         },
         onMove: (e) => {
           this.$emit('update:currentComponent', null)
